@@ -447,6 +447,7 @@ bool UniformVariable::parse(const QString &value, bool verifyOnly)
         strVal = value;
         return true;
     }
+
     strVal = "";
     copyFrom = this;
 

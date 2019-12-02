@@ -245,6 +245,7 @@ void GLWidget::paintGL() {
     handleAnimation();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //background skybox
     skybox_shader->bind();
     s_skybox->setValue(skybox_shader);
     s_projection->setValue(skybox_shader);

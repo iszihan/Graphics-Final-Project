@@ -21,49 +21,25 @@ void main()
     vec3 cameraToVertex = normalize(vertex); //remember we are in camera space!
     vec3 vertexToCamera = normalize(vertexToCamera);
     // TODO: fill the rest in
-    
-    
-    //calculate reflection diection
-    
-    vec3 reflected_direction=reflect(cameraToVertex, n);       //is surface normal the same thing as eye_normal??
-    //convert to world space
-    vec4 world_space_reflected_direction=(inverse(view)*vec4(reflected_direction,0.0));
-    
-    //sample texture color
-    vec4 reflected_color=texture(envMap, world_space_reflected_direction.xzy);
-    
-    
-    //get camera space refraction direction
-    vec4 red_refracted_direction=vec4(refract(cameraToVertex,n,eta.r),0.0);
-    vec4 green_refracted_direction=vec4(refract(cameraToVertex,n,eta.g),0.0);
-    vec4 blue_refracted_direction=vec4(refract(cameraToVertex,n,eta.b),0.0);
-    
-    //get world space refraction direction
-    vec4 world_space_red_refracted_direction=inverse(view)*red_refracted_direction;
-    vec4 world_space_green_refracted_direction=inverse(view)*green_refracted_direction;
-    vec4 world_space_blue_refracted_direction=inverse(view)*blue_refracted_direction;
-    
-    vec4 refracted_color=vec4(0.0,0.0,0.0,0.0);
-    
-    //sample refracted color
-    refracted_color.r=texture(envMap,world_space_red_refracted_direction.xyz).r;
-    refracted_color.g=texture(envMap,world_space_green_refracted_direction.xyz).g;
-    refracted_color.b=texture(envMap,world_space_blue_refracted_direction.xyz).b;
-    refracted_color.a=1.0;
-    
-    //calculate F from shlick's approximation
-    float F=r0+(1-r0)*pow((1-dot(n, -1.0*cameraToVertex)),5);
-    
-    fragColor=mix(refracted_color, reflected_color, 1.0-F);
-    //fragColor=reflected_color;
-    //fragColor=vec4(1,0,0,0);
 
-    
-    
-    
-    
-    
+    vec3 refDir = reflect(cameraToVertex,n);
+    vec4 ref = transpose(inverse(view)) * vec4(refDir.x, refDir.y, refDir.z,0);
+    vec4 reflectColor = texture(envMap, ref.xyz);
 
+    vec3 refractDir_r = refract(cameraToVertex, n, eta.r);
+    vec3 refractDir_g = refract(cameraToVertex, n, eta.g);
+    vec3 refractDir_b = refract(cameraToVertex, n, eta.b);
 
-    //fragColor = vec4(0.0);
+    vec4 w_refractDir_r = transpose(inverse(view)) * vec4(refractDir_r.x, refractDir_r.y, refractDir_r.z,0);
+    vec4 w_refractDir_g = transpose(inverse(view)) * vec4(refractDir_g.x, refractDir_g.y, refractDir_g.z,0);
+    vec4 w_refractDir_b = transpose(inverse(view)) * vec4(refractDir_b.x, refractDir_b.y, refractDir_b.z,0);
+
+    float refractColor_r = texture(envMap, w_refractDir_r.xyz).r;
+    float refractColor_g = texture(envMap, w_refractDir_g.xyz).g;
+    float refractColor_b = texture(envMap, w_refractDir_b.xyz).b;
+
+    vec4 refractColor = vec4(refractColor_r, refractColor_g, refractColor_b, 1.0);
+    float F = r0 + (1-r0)*pow((1-dot(n,-cameraToVertex)),5);
+
+    fragColor = mix(refractColor, reflectColor, F);
 }
