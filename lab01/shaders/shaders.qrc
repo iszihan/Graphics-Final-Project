@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>shader.frag</file>
+        <file>shader.vert</file>
+        <file>metaball.frag</file>
+    </qresource>
+</RCC>
