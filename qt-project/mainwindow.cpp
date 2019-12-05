@@ -243,7 +243,7 @@ void MainWindow::on_shader1Button_clicked()
 
 void MainWindow::on_shader2Button_clicked()
 {
-    loadShader(":/shaders/glass.vert", ":/shaders/bubble.frag");
+    loadShader(":/shaders/glass.vert", ":/shaders/glass.frag");
 }
 
 void MainWindow::on_checkBox_toggled(bool checked)

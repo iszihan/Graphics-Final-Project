@@ -86,6 +86,16 @@ macx {
 RESOURCES += \
     resources.qrc
 
+OTHER_FILES += \
+    shaders/shader.frag \
+    shaders/shader.vert \
+    metaball.frag \
+    glass.frag \
+    glass.vert \
+    skybox.frag \
+    skybox.vert \
+    bubble.frag
+
 DISTFILES += \
     shaders/normals/normals.vert \
     shaders/normals/normals.frag \

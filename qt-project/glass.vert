@@ -6,6 +6,7 @@ in vec3 normal;
 out vec3 vertex;	    // The position of the vertex, in camera space
 out vec3 vertexToCamera;    // Vector from the vertex to the eye, which is the camera
 out vec3 eyeNormal;	    // Normal of the vertex, in camera space
+out vec2 fragCoord;
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -16,5 +17,9 @@ void main()
     vertex = ((view*model)*(vec4(position, 1.0))).xyz;
     eyeNormal = normalize(mat3(transpose(inverse(view*model))) * normal);
     vertexToCamera = -normalize(vertex);
+
     gl_Position = projection*view*model*vec4(position,1.0);
+
+    fragCoord = gl_Position.xy;
+
 }

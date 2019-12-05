@@ -250,51 +250,65 @@ void GLWidget::paintGL() {
     s_skybox->setValue(skybox_shader);
     s_projection->setValue(skybox_shader);
     s_view->setValue(skybox_shader);
+    skybox_shader->setUniformValue("resolutionX", this->size().width());
+    skybox_shader->setUniformValue("resolutionY", this->size().height());
+    float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
+    skybox_shader->setUniformValue("iTime", t);
+    foreach (const UniformVariable *var, *activeUniforms) {
+        var->setValue(skybox_shader);
+    }
+
     glCullFace(GL_FRONT);
     skybox_cube->draw();
     glCullFace(GL_BACK);
     skybox_shader->release();
 
     // Geometry
-    if (m_shape) {
+//    if (m_shape) {
 
-        if (current_shader) {
-            current_shader->bind();
+//        if (current_shader) {
+//            current_shader->bind();
 
-            foreach (const UniformVariable *var, *activeUniforms) {
-                var->setValue(current_shader);
-            }
-        }
+//            foreach (const UniformVariable *var, *activeUniforms) {
+//                var->setValue(current_shader);
+//            }
 
-        m_shape->draw();
-        if (current_shader) {
-            current_shader->release();
-        }
+//            current_shader->setUniformValue("resolutionX", this->size().width());
+//            current_shader->setUniformValue("resolutionY", this->size().height());
+//            float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
+//            current_shader->setUniformValue("iTime", t);
 
-        if (drawWireframe) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            switch(wireframeMode) {
-            case WIREFRAME_NORMAL:
-                wireframe_shader->bind();
-                s_mvp->setValue(wireframe_shader);
-                wireframe_shader->setUniformValue("color", 0, 0, 0, 1);
-                m_shape->draw();
-                wireframe_shader->release();
-                break;
-            case WIREFRAME_VERT:
-                wireframe_shader2->bind();
-                foreach (const UniformVariable *var, *activeUniforms) {
-                    var->setValue(wireframe_shader2);
-                }
-                wireframe_shader2->setUniformValue("color", 0, 0, 0, 1);
-                m_shape->draw();
-                wireframe_shader2->release();
-                break;
-            }
+//        }
 
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-    }
+//        m_shape->draw();
+//        if (current_shader) {
+//            current_shader->release();
+//        }
+
+//        if (drawWireframe) {
+//            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//            switch(wireframeMode) {
+//            case WIREFRAME_NORMAL:
+//                wireframe_shader->bind();
+//                s_mvp->setValue(wireframe_shader);
+//                wireframe_shader->setUniformValue("color", 0, 0, 0, 1);
+//                m_shape->draw();
+//                wireframe_shader->release();
+//                break;
+//            case WIREFRAME_VERT:
+//                wireframe_shader2->bind();
+//                foreach (const UniformVariable *var, *activeUniforms) {
+//                    var->setValue(wireframe_shader2);
+//                }
+//                wireframe_shader2->setUniformValue("color", 0, 0, 0, 1);
+//                m_shape->draw();
+//                wireframe_shader2->release();
+//                break;
+//            }
+
+//            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//        }
+//    }
 }
 
 void GLWidget::changeRenderMode(RenderType mode)
@@ -348,7 +362,7 @@ bool GLWidget::loadShader(QString vert, QString frag, QString *errors)
 
     UniformVariable::resetTimer();
 
-    // http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
+    //http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
 
     std::vector<GLchar> nameData(256);
     GLint numActiveUniforms = 0;
