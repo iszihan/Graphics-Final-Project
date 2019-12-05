@@ -143,12 +143,12 @@ void main()
     vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(n, cameraToVertex));
     vec4 fragColor_first = mix(backgroundColor, bubbleColor, F);
 
-    float backbubbleHeight = 0.5 - 0.5 * n.y;
-    vec3 backVertex = vertex+ vec3(0.f, 0.f, -sphereRadius * 2.f);
-    vec3 cameraTobackVertex = normalize(backVertex); //remember we are in camera space!
-    float backF = r0 + (1-r0)*pow((1-dot(n,-cameraTobackVertex)),5);
-    float backfilmWidth = varfilmwidth * warpnoise3(backVertex) + minfilmwidth + (1.0 - backbubbleHeight) * (maxfilmwidth - minfilmwidth);
-    vec4 backbubbleColor = sp_spectral_filter(reflectColor, backfilmWidth, dot(n, cameraTobackVertex));
-    fragColor = mix(fragColor_first, backbubbleColor, backF);
+//    float backbubbleHeight = 0.5 - 0.5 * n.y;
+//    vec3 backVertex = vertex+ vec3(0.f, 0.f, -sphereRadius * 2.f);
+//    vec3 cameraTobackVertex = normalize(backVertex); //remember we are in camera space!
+//    float backF = r0 + (1-r0)*pow((1-dot(n,-cameraTobackVertex)),5);
+//    float backfilmWidth = varfilmwidth * warpnoise3(backVertex) + minfilmwidth + (1.0 - backbubbleHeight) * (maxfilmwidth - minfilmwidth);
+//    vec4 backbubbleColor = sp_spectral_filter(reflectColor, backfilmWidth, dot(n, cameraTobackVertex));
+//    fragColor = mix(fragColor_first, backbubbleColor, backF);
 
 }

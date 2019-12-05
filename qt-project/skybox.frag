@@ -121,14 +121,14 @@ float sphere(vec3 pos)
 float blob5(float d1, float d2, float d3, float d4, float d5)
 {
     float k = 2.0;
-        return -log(exp(-k*d1)+exp(-k*d2)+exp(-k*d3)+exp(-k*d4)+exp(-k*d5))/k;
+        return -log(exp(-k*d1)+exp(-k*d2)+exp(-k*d3)+exp(-k*d4))/k;//+exp(-k*d5))/k;
 }
 
 float scene(vec3 pos)
 {
-    float t = iTime;
+    float t = iTime/5.f;
 
-    float ec = 1.5;
+    float ec = 3; // ~how far apart the five sphere are within the metalball scene
     float s1 = sphere(pos - ec * vec3(cos(t*1.1),cos(t*1.3),cos(t*1.7)));
     float s2 = sphere(pos + ec * vec3(cos(t*0.7),cos(t*1.9),cos(t*2.3)));
     float s3 = sphere(pos + ec * vec3(cos(t*0.3),cos(t*2.9),sin(t*1.1)));
@@ -171,9 +171,9 @@ vec3 calcNormal( in vec3 pos )
                                           v4*scene( pos + v4*eps ) );
 }
 
-vec3 background( vec3 rd )
+vec4 background( vec3 rd )
 {
-    return texture(skybox, rd).xyz;
+    return texture(skybox, rd);
 }
 
 vec3 calcLight( in vec3 pos , in vec3 camdir, in vec3 lightp, in vec3 lightc, in vec3 normal , in vec3 texture)
@@ -188,32 +188,48 @@ vec3 calcLight( in vec3 pos , in vec3 camdir, in vec3 lightp, in vec3 lightc, in
     return lightc * (diffuse + phong);
 }
 
-vec3 illuminate( in vec3 pos , in vec3 camdir)
+//vec3 illuminate( in vec3 pos , in vec3 camdir)
+//{
+//    vec3 normal = calcNormal(pos);
+
+//    const float ETA = 0.9;
+//    vec3 refrd = -refract(camdir,normal,ETA);
+//    vec3 refro = pos + 10.0 * refrd;
+//    float refdist = intersection(refro, refrd);
+//    vec3 refpos = refro + refdist * refrd;
+//    vec3 refnormal = calcNormal(refpos);
+
+//    vec3 tex0 = vec3(0.f);
+//    vec3 tex1 = vec3(0.f);
+//    if (refdist < -0.5) {
+//        tex0 = background(-refrd);
+//        tex1 = tex0;
+//    }
+//    vec3 tex2 = vec3(0.f);
+//    vec3 tex3 = vec3(0.f);
+//    vec3 texture = vec3(1.0,0.9,0.9)* (0.4 * tex0 + 0.4 * tex1 + 0.03 * tex2 + 0.1 * tex3);
+
+//    vec3 l1 = calcLight(pos, camdir, vec3(0.0,10.0,-20.0), vec3(1.0,1.0,1.0), normal, texture);
+//    vec3 l2 = calcLight(pos, camdir, vec3(-20,10.0,0.0), vec3(1.0,1.0,1.0), normal, texture);
+//    vec3 l3 = calcLight(pos, camdir, vec3(20.0,10.0,0.0), vec3(1.0,1.0,1.0), normal, texture);
+//    vec3 l4 = calcLight(pos, camdir, vec3(0.0,-10.0,20.0), vec3(0.6,0.6,0.6), normal, texture);
+//    return l1+l2+l3+l4;
+//}
+
+vec4 illuminateBubble( in vec3 pos , in vec3 camdir)
 {
     vec3 normal = calcNormal(pos);
+    vec4 backgroundColor = background(camdir);
 
-    const float ETA = 0.9;
-    vec3 refrd = -refract(camdir,normal,ETA);
-    vec3 refro = pos + 10.0 * refrd;
-    float refdist = intersection(refro, refrd);
-    vec3 refpos = refro + refdist * refrd;
-    vec3 refnormal = calcNormal(refpos);
+    vec3 refdir = reflect(camdir,normal);
+    vec4 reflectColor = background(refdir);
 
-    vec3 tex0 = vec3(0.f);
-    vec3 tex1 = vec3(0.f);
-    if (refdist < -0.5) {
-        tex0 = background(-refrd);
-        tex1 = tex0;
-    }
-    vec3 tex2 = vec3(0.f);
-    vec3 tex3 = vec3(0.f);
-    vec3 texture = vec3(1.0,0.9,0.9)* (0.4 * tex0 + 0.4 * tex1 + 0.03 * tex2 + 0.1 * tex3);
+    float F = r0 + (1-r0)*pow((1-dot(normal,-camdir)),5);
+    float bubbleHeight = 0.5 + 0.5 * normal.y;
+    float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
+    vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(normal, camdir));
 
-    vec3 l1 = calcLight(pos, camdir, vec3(0.0,10.0,-20.0), vec3(1.0,1.0,1.0), normal, texture);
-    vec3 l2 = calcLight(pos, camdir, vec3(-20,10.0,0.0), vec3(1.0,1.0,1.0), normal, texture);
-    vec3 l3 = calcLight(pos, camdir, vec3(20.0,10.0,0.0), vec3(1.0,1.0,1.0), normal, texture);
-    vec3 l4 = calcLight(pos, camdir, vec3(0.0,-10.0,20.0), vec3(0.6,0.6,0.6), normal, texture);
-    return l1+l2+l3+l4;
+    return mix(backgroundColor, bubbleColor, F);
 }
 
 mat3 calcLookAtMatrix( in vec3 ro, in vec3 ta, in float roll )
@@ -238,7 +254,7 @@ void main()
     mat3 camMat = calcLookAtMatrix( campos, camtar, 0.0 );  // 0.0 is the camera roll
     vec3 camdir = normalize( camMat * vec3(xy,1.0) ); // 2.0 is the lens length
 
-    vec3 col = vec3(0.0,0.0,0.0);
+    vec4 col = vec4(0.0,0.0,0.0,0.0);
 
     float dist = intersection(campos, camdir);
 
@@ -246,8 +262,8 @@ void main()
     else
     {
         vec3 inters = campos + dist * camdir;
-        col = illuminate(inters, camdir);
+        col = illuminateBubble(inters, camdir);
     }
 
-    fragColor = vec4(col,1.0);
+    fragColor = col;
 }
