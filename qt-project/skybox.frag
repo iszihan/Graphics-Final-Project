@@ -10,7 +10,7 @@ in vec2 fragCoord;
 uniform int resolutionX;
 uniform int resolutionY;
 uniform float iTime;
-
+uniform int numWave;
 uniform float r0;		// The R0 value to use in Schlick's approximation
 uniform float eta1D;		// The eta value to use initially
 uniform vec3  eta;              // Contains one eta for each channel (use eta.r, eta.g, eta.b in your code)
@@ -32,20 +32,28 @@ mat3 sparsespfilta[13];
 mat3 sparsespfiltb[13];
 mat3 sparsespfiltconst;
 
+
+// The above process is condensed into a single filter function.
+// Instead of summing over 81 wavelength coefficents, the fourier
+// coefficients of the filter are used (13 for cos and sin components each),
+// and the fourier representation of the function is used to evaluate the entire function.
+// This is a vastly more efficient evaluation.
+// Cite:https://www.shadertoy.com/view/XtKyRK
 vec4 sp_spectral_filter(vec4 col, float filmwidth, float cosi)
 {
     vec4 retcol = vec4(0.0, 0.0, 0.0, 1.0);
     const float NN = 2001.0;
     float a = 1.0/(nu*nu);
     float cost = sqrt(a*cosi*cosi + (1.0-a));
-    float n = 2.0*PI*filmwidth*cost/NN;
+    float n = 2.0*PI*filmwidth*cost/NN; //some kind of measure of light interference in terms of film width and incident light angle
     float kn = 0.0;
     mat3 filt = sparsespfiltconst;
 
-    for(int i = 0; i < 13; i++)
+    for(int i = 0; i < numWave; i++)
     {
-        kn = (float(i)+6.0f)*n;
-        filt += sparsespfilta[i]*cos(kn) + sparsespfiltb[i]*sin(kn);
+        kn = (float(i)+6.0f)*n; //can be interpreted as light interference for different wavelength here?
+
+        filt += sparsespfilta[i]*cos(kn) + sparsespfiltb[i]*sin(kn);//because Ac + Bc = (A+B)c
     }
 
     retcol.xyz = 4.0*(filt*col.xyz)/NN;
@@ -53,7 +61,9 @@ vec4 sp_spectral_filter(vec4 col, float filmwidth, float cosi)
 }
 
 void initiateFilters(){
-    sparsespfiltconst = mat3(vec3(997.744490776777870, 0.000000000000000, 0.000000000000000), vec3(0.000000000000000, 1000.429230968840700, 0.000000000000000), vec3(0.000000000000000, 0.000000000000000, 1000.314923254210300));
+    sparsespfiltconst = mat3(vec3(997.744490776777870, 0.000000000000000, 0.000000000000000),
+                             vec3(0.000000000000000, 1000.429230968840700, 0.000000000000000),
+                             vec3(0.000000000000000, 0.000000000000000, 1000.314923254210300));
     sparsespfilta[0] = mat3(vec3(-9.173541963568921, 0.000000000000000, 0.000000000000000), vec3(0.000000000000000, 0.000000000000000, 0.000000000000000), vec3(0.000000000000000, 0.000000000000000, 0.000000000000000));
     sparsespfilta[1] = mat3(vec3(-12.118820092848431, 0.000000000000000, 0.000000000000000), vec3(0.000000000000000, 0.362717643641774, 0.000000000000000), vec3(0.000000000000000, 0.000000000000000, 0.000000000000000));
     sparsespfilta[2] = mat3(vec3(-18.453733912103289, 0.000000000000000, 0.000000000000000), vec3(0.000000000000000, 1.063838675818334, 0.000000000000000), vec3(0.000000000000000, 0.000000000000000, 0.000000000000000));
@@ -115,20 +125,20 @@ float warpnoise3(vec3 p) {
 
 float sphere(vec3 pos)
 {
-        return length(pos)-1.0;
+    return length(pos)-1.0;
 }
 
 float blob5(float d1, float d2, float d3, float d4, float d5)
 {
     float k = 2.0;
-        return -log(exp(-k*d1)+exp(-k*d2)+exp(-k*d3)+exp(-k*d4))/k;//+exp(-k*d5))/k;
+    return -log(exp(-k*d1)+exp(-k*d2)+exp(-k*d3)+exp(-k*d4)+exp(-k*d5))/k;
 }
 
 float scene(vec3 pos)
 {
     float t = iTime/5.f;
 
-    float ec = 3; // ~how far apart the five sphere are within the metalball scene
+    float ec = 3; // ~how far apart the five spheres are within the metalball scene
     float s1 = sphere(pos - ec * vec3(cos(t*1.1),cos(t*1.3),cos(t*1.7)));
     float s2 = sphere(pos + ec * vec3(cos(t*0.7),cos(t*1.9),cos(t*2.3)));
     float s3 = sphere(pos + ec * vec3(cos(t*0.3),cos(t*2.9),sin(t*1.1)));
@@ -140,15 +150,16 @@ float scene(vec3 pos)
 
 float intersection( in vec3 ro, in vec3 rd )
 {
-        const float maxd = 20.0;
-        const float precis = 0.001;
+    const float maxd = 20.0;
+    const float precis = 0.001;
     float h = precis*2.0;
     float t = 0.0;
-        float res = -1.0;
+    float res = -1.0;
+
     for( int i=0; i<90; i++ )
     {
         if( h<precis||t>maxd ) break;
-            h = scene( ro+rd*t );
+        h = scene( ro+rd*t );
         t += h;
     }
 
@@ -166,9 +177,9 @@ vec3 calcNormal( in vec3 pos )
     const vec3 v4 = vec3( 1.0, 1.0, 1.0);
 
         return normalize( v1*scene( pos + v1*eps ) +
-                                          v2*scene( pos + v2*eps ) +
-                                          v3*scene( pos + v3*eps ) +
-                                          v4*scene( pos + v4*eps ) );
+                          v2*scene( pos + v2*eps ) +
+                          v3*scene( pos + v3*eps ) +
+                          v4*scene( pos + v4*eps ) );
 }
 
 vec4 background( vec3 rd )
@@ -226,7 +237,9 @@ vec4 illuminateBubble( in vec3 pos , in vec3 camdir)
 
     float F = r0 + (1-r0)*pow((1-dot(normal,-camdir)),5);
     float bubbleHeight = 0.5 + 0.5 * normal.y;
-    float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
+//    float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
+    float filmWidth = varfilmwidth + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
+
     vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(normal, camdir));
 
     return mix(backgroundColor, bubbleColor, F);

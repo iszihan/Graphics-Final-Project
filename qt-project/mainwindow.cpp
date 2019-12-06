@@ -170,7 +170,7 @@ void MainWindow::closeEvent(QCloseEvent *e) {
 
 void MainWindow::on_defaultShaderButton_clicked()
 {
-    loadShader(":/shaders/default.vert", ":/shaders/default.frag");
+    loadShader(":/shaders/skybox.vert", ":/shaders/skybox.frag");
 }
 
 void MainWindow::on_animMoveButton_clicked()
@@ -231,6 +231,7 @@ QString tipsText = "<h2>Attributes</h2>\n"
         "<ul><li><b>&lt;mouse&gt;</b>: The location of the mouse (0,0 is upper left). z=1 if mouse is pressed, 0 if not.</li></ul>"
         "</li></ul>"
         "<p>Any questions or bugs can be emailed to the cs123 tas (cs123tas@cs.brown.edu).</p>";
+
 void MainWindow::on_tipsButton_clicked()
 {
     QMessageBox::information(this, "Tips", tipsText);

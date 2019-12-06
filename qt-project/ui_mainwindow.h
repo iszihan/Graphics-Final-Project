@@ -18,6 +18,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -53,6 +54,8 @@ public:
     QCheckBox *wireframeCheckbox;
     QCheckBox *checkBox;
     QFrame *line_5;
+    QLabel *label_6;
+    QSpinBox *numWave;
     QSpacerItem *verticalSpacer;
     QVBoxLayout *verticalLayout_2;
     QSpacerItem *horizontalSpacer;
@@ -215,6 +218,18 @@ public:
 
         verticalLayout->addWidget(line_5);
 
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QStringLiteral("label_6"));
+
+        verticalLayout->addWidget(label_6);
+
+        numWave = new QSpinBox(centralWidget);
+        numWave->setObjectName(QStringLiteral("numWave"));
+        numWave->setMinimum(1);
+        numWave->setMaximum(13);
+
+        verticalLayout->addWidget(numWave);
+
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         verticalLayout->addItem(verticalSpacer);
@@ -282,6 +297,7 @@ public:
         label_5->setText(QApplication::translate("MainWindow", "Wireframe:", nullptr));
         wireframeCheckbox->setText(QApplication::translate("MainWindow", "Enabled", nullptr));
         checkBox->setText(QApplication::translate("MainWindow", "Use Vertex Shader", nullptr));
+        label_6->setText(QApplication::translate("MainWindow", "Number of Wavelength for Interference", nullptr));
         tipsButton->setText(QApplication::translate("MainWindow", "Tips", nullptr));
     } // retranslateUi
 

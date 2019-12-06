@@ -92,9 +92,15 @@ OTHER_FILES += \
     metaball.frag \
     glass.frag \
     glass.vert \
+    glass.vars \
     skybox.frag \
     skybox.vert \
-    bubble.frag
+    skybox.vars \
+    bubble.frag \
+    default.vert \
+    default.frag \
+    metal.vert \
+    metal.frag
 
 DISTFILES += \
     shaders/normals/normals.vert \

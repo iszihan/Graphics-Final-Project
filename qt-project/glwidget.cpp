@@ -257,11 +257,29 @@ void GLWidget::paintGL() {
     foreach (const UniformVariable *var, *activeUniforms) {
         var->setValue(skybox_shader);
     }
-
     glCullFace(GL_FRONT);
     skybox_cube->draw();
     glCullFace(GL_BACK);
     skybox_shader->release();
+
+    if (current_shader) {
+        current_shader->bind();
+
+        foreach (const UniformVariable *var, *activeUniforms) {
+            var->setValue(current_shader);
+        }
+
+        current_shader->setUniformValue("resolutionX", this->size().width());
+        current_shader->setUniformValue("resolutionY", this->size().height());
+        float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
+        current_shader->setUniformValue("iTime", t);
+        skybox_cube->draw();
+
+    }
+    if (current_shader) {
+        current_shader->release();
+    }
+
 
     // Geometry
 //    if (m_shape) {
