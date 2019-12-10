@@ -23,13 +23,13 @@ uniform float iTime;
 
 float sphere(vec3 pos)
 {
-        return length(pos)-1.0;
+    return length(pos)-1.0;
 }
 
 float blob5(float d1, float d2, float d3, float d4, float d5)
 {
     float k = 2.0;
-        return -log(exp(-k*d1)+exp(-k*d2)+exp(-k*d3)+exp(-k*d4)+exp(-k*d5))/k;
+    return -log(exp(-k*d1)+exp(-k*d2)+exp(-k*d3)+exp(-k*d4)+exp(-k*d5))/k;
 }
 
 float scene(vec3 pos)
@@ -48,15 +48,16 @@ float scene(vec3 pos)
 
 float intersection( in vec3 ro, in vec3 rd )
 {
-        const float maxd = 20.0;
-        const float precis = 0.001;
+    const float maxd = 20.0;
+    const float precis = 0.001;
     float h = precis*2.0;
     float t = 0.0;
-        float res = -1.0;
-    for( int i=0; i<90; i++ )
+    float res = -1.0;
+    for (int i = 0; i < 90; i++)
     {
-        if( h<precis||t>maxd ) break;
-            h = scene( ro+rd*t );
+        if( h<precis||t>maxd )
+            break;
+        h = scene( ro+rd*t );
         t += h;
     }
 

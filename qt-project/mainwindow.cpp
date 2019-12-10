@@ -112,7 +112,7 @@ void MainWindow::init()
         loadShader(info.absolutePath() + "/" + info.baseName() + ".vert",
                    info.absolutePath() + "/" + info.baseName() + ".frag");
     } else {
-        loadShader(":/shaders/default.vert", ":/shaders/default.frag");
+        loadShader(":/shaders/skybox.vert", ":/shaders/default.frag");
     }
 }
 
