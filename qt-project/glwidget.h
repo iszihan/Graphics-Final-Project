@@ -6,6 +6,8 @@
 #include "uniforms/uniformvariable.h"
 #include <QTimer>
 
+#include "gl/datatype/FBO.h"
+
 class Cube;
 
 class QGLShaderProgram;
@@ -73,13 +75,17 @@ protected:
 private:
     std::unique_ptr<OpenGLShape> m_sphere;
     std::unique_ptr<OpenGLShape> m_cube;
+    std::unique_ptr<OpenGLShape> m_quad;
     OpenGLShape *m_shape;
     Camera *camera;
     std::unique_ptr<OpenGLShape> skybox_cube;
     QGLShaderProgram *skybox_shader;
+    QGLShaderProgram *m_horizontalBlurProgram;
     QGLShaderProgram *wireframe_shader;
     QGLShaderProgram *wireframe_shader2;
     QGLShaderProgram *current_shader;
+
+    std::unique_ptr<FBO> m_FBO;
 
     QList<const UniformVariable*> *activeUniforms;
     QList<const UniformVariable*> permUniforms;

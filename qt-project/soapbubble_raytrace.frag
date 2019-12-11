@@ -98,7 +98,7 @@ vec4 sp_spectral_filter(vec4 col, float filmwidth, float cosi)
     float kn = 0.0;
     mat3 filt = sparsespfiltconst;
 
-    for(int i = 0; i < 13; i++)
+    for(int i = 0; i < numWave; i++)
     {
         kn = (float(i)+6.0f)*n;
         filt += sparsespfilta[i]*cos(kn) + sparsespfiltb[i]*sin(kn);
@@ -202,11 +202,11 @@ bool compare(inout Hit a, Hit b)
 
 Hit intersectScene(Ray r)
 {
-    float t = iTime;
+    float t = iTime / 5.0;
     //Plane p = Plane(0.f, vec3(0.f, 1.f, 0.f), Material(0.f, vec3(0.1f), vec3(0.5f, 0.4f, 0.3f), vec3(0.04f)));
-    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),2.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
-    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),2.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
-    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),2.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
+    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
+    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
+    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
 
     Hit hit = noHit;
     //compare(hit, intersectPlane(p, r));
@@ -217,11 +217,10 @@ Hit intersectScene(Ray r)
 }
 
 // Light
-
 vec3 skyColor(vec3 d) {
-//    float transition = pow(smoothstep(0.02, .5, d.y), 0.4);
-//    return mix(vec3(0.52f, 0.77f, 1.f), vec3(0.12f, 0.43f, 1.f), transition);
+
     return texture(skybox, d).xyz;
+
 }
 
 float pow5(float x) {

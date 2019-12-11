@@ -15,6 +15,7 @@ uniform mat4 view;              // view matrix
 uniform mat4 projection;        // projection matrix
 
 uniform vec4 lightPosition;
+const float scale = 8;
 
 void main()
 {
@@ -26,7 +27,7 @@ void main()
     vertexToCamera = -normalize(vertex);
     eyeNormal = normalize(mat3(transpose(inverse(view*model))) * normal);
 
-    gl_Position = projection*view*model*(vec4(position,1.0));
+    gl_Position = projection*view*model*(vec4(position * scale,1.0));
     fragCoord = gl_Position.xy;
 
 }

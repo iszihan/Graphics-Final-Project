@@ -8,7 +8,7 @@ in vec3 position;
 out vec3 pos_object;
 out vec2 fragCoord;
 
-const float scale = 1;
+const float scale = 8;
 
 void main() {
      pos_object = position;

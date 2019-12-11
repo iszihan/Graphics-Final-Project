@@ -199,33 +199,6 @@ vec3 calcLight( in vec3 pos , in vec3 camdir, in vec3 lightp, in vec3 lightc, in
     return lightc * (diffuse + phong);
 }
 
-//vec3 illuminate( in vec3 pos , in vec3 camdir)
-//{
-//    vec3 normal = calcNormal(pos);
-
-//    const float ETA = 0.9;
-//    vec3 refrd = -refract(camdir,normal,ETA);
-//    vec3 refro = pos + 10.0 * refrd;
-//    float refdist = intersection(refro, refrd);
-//    vec3 refpos = refro + refdist * refrd;
-//    vec3 refnormal = calcNormal(refpos);
-
-//    vec3 tex0 = vec3(0.f);
-//    vec3 tex1 = vec3(0.f);
-//    if (refdist < -0.5) {
-//        tex0 = background(-refrd);
-//        tex1 = tex0;
-//    }
-//    vec3 tex2 = vec3(0.f);
-//    vec3 tex3 = vec3(0.f);
-//    vec3 texture = vec3(1.0,0.9,0.9)* (0.4 * tex0 + 0.4 * tex1 + 0.03 * tex2 + 0.1 * tex3);
-
-//    vec3 l1 = calcLight(pos, camdir, vec3(0.0,10.0,-20.0), vec3(1.0,1.0,1.0), normal, texture);
-//    vec3 l2 = calcLight(pos, camdir, vec3(-20,10.0,0.0), vec3(1.0,1.0,1.0), normal, texture);
-//    vec3 l3 = calcLight(pos, camdir, vec3(20.0,10.0,0.0), vec3(1.0,1.0,1.0), normal, texture);
-//    vec3 l4 = calcLight(pos, camdir, vec3(0.0,-10.0,20.0), vec3(0.6,0.6,0.6), normal, texture);
-//    return l1+l2+l3+l4;
-//}
 
 vec4 illuminateBubble( in vec3 pos , in vec3 camdir)
 {
@@ -257,7 +230,6 @@ void main()
 {
     initiateFilters();
 
-    vec2 iResolution = vec2(resolutionX, resolutionY);
     vec2 xy = fragCoord;
 
     float t = iTime;
@@ -265,7 +237,7 @@ void main()
     vec3 camtar = vec3(0.0,0.0,0.0);
 
     mat3 camMat = calcLookAtMatrix( campos, camtar, 0.0 );  // 0.0 is the camera roll
-    vec3 camdir = normalize( camMat * vec3(xy,1.0) ); // 2.0 is the lens length
+    vec3 camdir = normalize( camMat * vec3(xy, 1.0) ); // 1.0 is the lens length
 
     vec4 col = vec4(0.0,0.0,0.0,0.0);
 

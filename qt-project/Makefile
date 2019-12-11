@@ -62,7 +62,15 @@ SOURCES       = main.cpp \
 		gl/datatype/vbo.cpp \
 		gl/datatype/vboattribmarker.cpp \
 		shapes/openglshape.cpp \
-		gl/datatype/vao.cpp qrc_resources.cpp \
+		gl/datatype/vao.cpp \
+		gl/datatype/FBO.cpp \
+		gl/textures/Texture.cpp \
+		gl/textures/Texture2D.cpp \
+		gl/textures/TextureParameters.cpp \
+		gl/textures/TextureParametersBuilder.cpp \
+		gl/textures/RenderBuffer.cpp \
+		gl/textures/DepthBuffer.cpp \
+		gl/GLDebug.cpp qrc_resources.cpp \
 		moc_glwidget.cpp \
 		moc_mainwindow.cpp \
 		moc_uniformwidget.cpp \
@@ -81,6 +89,14 @@ OBJECTS       = main.o \
 		vboattribmarker.o \
 		openglshape.o \
 		vao.o \
+		FBO.o \
+		Texture.o \
+		Texture2D.o \
+		TextureParameters.o \
+		TextureParametersBuilder.o \
+		RenderBuffer.o \
+		DepthBuffer.o \
+		GLDebug.o \
 		qrc_resources.o \
 		moc_glwidget.o \
 		moc_mainwindow.o \
@@ -202,7 +218,15 @@ DIST          = shaders/normals/normals.vert \
 		gl/datatype/vbo.h \
 		gl/datatype/vboattribmarker.h \
 		gl/shaders/shaderattriblocations.h \
-		gl/datatype/vao.h main.cpp \
+		gl/datatype/vao.h \
+		gl/datatype/FBO.h \
+		gl/textures/Texture.h \
+		gl/textures/Texture2D.h \
+		gl/textures/TextureParameters.h \
+		gl/textures/TextureParametersBuilder.h \
+		gl/textures/RenderBuffer.h \
+		gl/textures/DepthBuffer.h \
+		gl/GLDebug.h main.cpp \
 		glew-1.10.0/src/glew.c \
 		glwidget.cpp \
 		mainwindow.cpp \
@@ -214,7 +238,15 @@ DIST          = shaders/normals/normals.vert \
 		gl/datatype/vbo.cpp \
 		gl/datatype/vboattribmarker.cpp \
 		shapes/openglshape.cpp \
-		gl/datatype/vao.cpp
+		gl/datatype/vao.cpp \
+		gl/datatype/FBO.cpp \
+		gl/textures/Texture.cpp \
+		gl/textures/Texture2D.cpp \
+		gl/textures/TextureParameters.cpp \
+		gl/textures/TextureParametersBuilder.cpp \
+		gl/textures/RenderBuffer.cpp \
+		gl/textures/DepthBuffer.cpp \
+		gl/GLDebug.cpp
 QMAKE_TARGET  = final
 DESTDIR       = 
 TARGET        = final
@@ -441,8 +473,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ui_mainwindow.h glew-1.10.0/include/GL/glew.h glwidget.h mainwindow.h uniforms/uniformvariable.h lib/common.h uniforms/uniformwidget.h camera/orbitingcamera.h camera/camera.h uniforms/varsfile.h shapes/cube.h lib/resourceloader.h shapes/sphere.h shapes/openglshape.h gl/datatype/vbo.h gl/datatype/vboattribmarker.h gl/shaders/shaderattriblocations.h gl/datatype/vao.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp glew-1.10.0/src/glew.c glwidget.cpp mainwindow.cpp uniforms/uniformvariable.cpp uniforms/uniformwidget.cpp camera/orbitingcamera.cpp uniforms/varsfile.cpp lib/resourceloader.cpp gl/datatype/vbo.cpp gl/datatype/vboattribmarker.cpp shapes/openglshape.cpp gl/datatype/vao.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ui_mainwindow.h glew-1.10.0/include/GL/glew.h glwidget.h mainwindow.h uniforms/uniformvariable.h lib/common.h uniforms/uniformwidget.h camera/orbitingcamera.h camera/camera.h uniforms/varsfile.h shapes/cube.h lib/resourceloader.h shapes/sphere.h shapes/openglshape.h gl/datatype/vbo.h gl/datatype/vboattribmarker.h gl/shaders/shaderattriblocations.h gl/datatype/vao.h gl/datatype/FBO.h gl/textures/Texture.h gl/textures/Texture2D.h gl/textures/TextureParameters.h gl/textures/TextureParametersBuilder.h gl/textures/RenderBuffer.h gl/textures/DepthBuffer.h gl/GLDebug.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp glew-1.10.0/src/glew.c glwidget.cpp mainwindow.cpp uniforms/uniformvariable.cpp uniforms/uniformwidget.cpp camera/orbitingcamera.cpp uniforms/varsfile.cpp lib/resourceloader.cpp gl/datatype/vbo.cpp gl/datatype/vboattribmarker.cpp shapes/openglshape.cpp gl/datatype/vao.cpp gl/datatype/FBO.cpp gl/textures/Texture.cpp gl/textures/Texture2D.cpp gl/textures/TextureParameters.cpp gl/textures/TextureParametersBuilder.cpp gl/textures/RenderBuffer.cpp gl/textures/DepthBuffer.cpp gl/GLDebug.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ui/mainwindow.ui $(DISTDIR)/
 
 
@@ -472,21 +504,24 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resources.cpp
 qrc_resources.cpp: resources.qrc \
 		/usr/lib/qt5/bin/rcc \
-		soapbubble_raymarch.frag \
-		glass.vars \
-		skybox.vert \
-		soapbubble_raytrace.frag \
 		glass.vert \
-		metal.frag \
+		glass.vars \
+		soapbubble_raytrace.frag \
 		soapbubble_raymarch.vars \
-		metal.vars \
-		standard.vert \
-		default.vert \
-		flat.frag \
 		metal.vert \
-		glass.frag \
-		color.frag \
 		bubble.frag \
+		metal.vars \
+		skybox.vert \
+		glass.frag \
+		default.vert \
+		soapbubble_raymarch.frag \
+		quad.vert \
+		standard.vert \
+		metal.frag \
+		soapbubble_raytrace.vars \
+		flat.frag \
+		color.frag \
+		horizontalBlur.frag \
 		negx.jpg \
 		posx.jpg \
 		negz.jpg \
@@ -587,6 +622,8 @@ moc_glwidget.cpp: shapes/openglshape.h \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
 		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h \
 		glwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -676,6 +713,8 @@ moc_mainwindow.cpp: glwidget.h \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
 		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h \
 		mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -765,6 +804,8 @@ moc_uniformwidget.cpp: glwidget.h \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
 		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h \
 		uniforms/uniformwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -1038,7 +1079,9 @@ main.o: main.cpp mainwindow.h \
 		glm/detail/func_integer.hpp \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
-		lib/common.h
+		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 glew.o: glew-1.10.0/src/glew.c glew-1.10.0/include/GL/glew.h \
@@ -1130,6 +1173,8 @@ glwidget.o: glwidget.cpp glwidget.h \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
 		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h \
 		shapes/sphere.h \
 		shapes/cube.h \
 		camera/orbitingcamera.h \
@@ -1143,7 +1188,9 @@ glwidget.o: glwidget.cpp glwidget.h \
 		glm/gtc/quaternion.inl \
 		glm/gtc/type_ptr.inl \
 		glm/gtc/matrix_transform.hpp \
-		glm/gtc/matrix_transform.inl
+		glm/gtc/matrix_transform.inl \
+		gl/textures/Texture2D.h \
+		gl/textures/Texture.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o glwidget.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -1231,6 +1278,8 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
 		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h \
 		ui_mainwindow.h \
 		uniforms/uniformwidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
@@ -1318,7 +1367,9 @@ uniformvariable.o: uniforms/uniformvariable.cpp uniforms/uniformvariable.h \
 		glm/vector_relational.hpp \
 		glm/integer.hpp \
 		glm/detail/func_integer.hpp \
-		glm/detail/func_integer.inl
+		glm/detail/func_integer.inl \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uniformvariable.o uniforms/uniformvariable.cpp
 
 uniformwidget.o: uniforms/uniformwidget.cpp uniforms/uniformwidget.h \
@@ -1405,7 +1456,9 @@ uniformwidget.o: uniforms/uniformwidget.cpp uniforms/uniformwidget.h \
 		glm/detail/func_integer.hpp \
 		glm/detail/func_integer.inl \
 		uniforms/uniformvariable.h \
-		lib/common.h
+		lib/common.h \
+		gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uniformwidget.o uniforms/uniformwidget.cpp
 
 orbitingcamera.o: camera/orbitingcamera.cpp camera/orbitingcamera.h \
@@ -1521,6 +1574,52 @@ vao.o: gl/datatype/vao.cpp gl/datatype/vao.h \
 		glew-1.10.0/include/GL/glew.h \
 		gl/datatype/vbo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o vao.o gl/datatype/vao.cpp
+
+FBO.o: gl/datatype/FBO.cpp gl/datatype/FBO.h \
+		gl/textures/TextureParameters.h \
+		glew-1.10.0/include/GL/glew.h \
+		gl/GLDebug.h \
+		gl/textures/RenderBuffer.h \
+		gl/textures/DepthBuffer.h \
+		gl/textures/Texture2D.h \
+		gl/textures/Texture.h \
+		gl/textures/TextureParametersBuilder.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o FBO.o gl/datatype/FBO.cpp
+
+Texture.o: gl/textures/Texture.cpp gl/textures/Texture.h \
+		glew-1.10.0/include/GL/glew.h \
+		gl/GLDebug.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Texture.o gl/textures/Texture.cpp
+
+Texture2D.o: gl/textures/Texture2D.cpp gl/textures/Texture2D.h \
+		gl/textures/Texture.h \
+		glew-1.10.0/include/GL/glew.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Texture2D.o gl/textures/Texture2D.cpp
+
+TextureParameters.o: gl/textures/TextureParameters.cpp gl/textures/TextureParameters.h \
+		glew-1.10.0/include/GL/glew.h \
+		gl/GLDebug.h \
+		gl/textures/Texture.h \
+		gl/textures/Texture2D.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o TextureParameters.o gl/textures/TextureParameters.cpp
+
+TextureParametersBuilder.o: gl/textures/TextureParametersBuilder.cpp gl/textures/TextureParametersBuilder.h \
+		gl/textures/TextureParameters.h \
+		glew-1.10.0/include/GL/glew.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o TextureParametersBuilder.o gl/textures/TextureParametersBuilder.cpp
+
+RenderBuffer.o: gl/textures/RenderBuffer.cpp gl/textures/RenderBuffer.h \
+		glew-1.10.0/include/GL/glew.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o RenderBuffer.o gl/textures/RenderBuffer.cpp
+
+DepthBuffer.o: gl/textures/DepthBuffer.cpp gl/textures/DepthBuffer.h \
+		gl/textures/RenderBuffer.h \
+		glew-1.10.0/include/GL/glew.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DepthBuffer.o gl/textures/DepthBuffer.cpp
+
+GLDebug.o: gl/GLDebug.cpp gl/GLDebug.h \
+		glew-1.10.0/include/GL/glew.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GLDebug.o gl/GLDebug.cpp
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp

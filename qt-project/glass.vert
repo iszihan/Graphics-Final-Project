@@ -12,13 +12,15 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform mat4 model;
 
+const float scale = 8;
+
 void main()
 {
     vertex = ((view*model)*(vec4(position, 1.0))).xyz;
     eyeNormal = normalize(mat3(transpose(inverse(view*model))) * normal);
     vertexToCamera = -normalize(vertex);
 
-    gl_Position = projection*view*model*vec4(position,1.0);
+    gl_Position = projection*view*model*vec4(position * scale,1.0);
 
     fragCoord = gl_Position.xy;
 

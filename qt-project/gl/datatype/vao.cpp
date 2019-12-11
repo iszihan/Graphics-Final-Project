@@ -49,8 +49,6 @@ VAO::~VAO()
     glDeleteVertexArrays(1, &m_handle);
 }
 
-
-
 void VAO::draw() {
     draw(m_numVertices);
 }

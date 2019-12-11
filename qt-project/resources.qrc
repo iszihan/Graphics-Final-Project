@@ -15,6 +15,9 @@
         <file>glass.vars</file>
         <file>flat.frag</file>
         <file>soapbubble_raymarch.vars</file>
+        <file>soapbubble_raytrace.vars</file>
+        <file>quad.vert</file>
+        <file>horizontalBlur.frag</file>
     </qresource>
     <qresource prefix="/skybox">
         <file>negx.jpg</file>

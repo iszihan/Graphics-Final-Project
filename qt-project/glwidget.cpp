@@ -10,6 +10,8 @@
 #include "gl/shaders/shaderattriblocations.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "gl/textures/Texture2D.h"
+
 
 UniformVariable *GLWidget::s_skybox = NULL;
 UniformVariable *GLWidget::s_projection = NULL;
@@ -22,7 +24,7 @@ UniformVariable *GLWidget::s_mouse = NULL;
 std::vector<UniformVariable*> *GLWidget::s_staticVars = NULL;
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), m_sphere(nullptr), m_cube(nullptr), m_shape(nullptr), skybox_cube(nullptr)
+    : QGLWidget(format, parent), m_FBO(nullptr), m_sphere(nullptr), m_cube(nullptr), m_shape(nullptr), skybox_cube(nullptr)
 {
     camera = new OrbitingCamera();
     QObject::connect(camera, SIGNAL(viewChanged(glm::mat4)), this, SLOT(viewChanged(glm::mat4)));
@@ -123,6 +125,8 @@ void GLWidget::initializeGL() {
     glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
+    m_horizontalBlurProgram = ResourceLoader::newShaderProgram(context(),
+                ":/shaders/quad.vert", ":/shaders/horizontalBlur.frag");
     skybox_shader = ResourceLoader::newShaderProgram(context(), ":/shaders/skybox.vert", ":/shaders/soapbubble_raymarch.frag");
     wireframe_shader = ResourceLoader::newShaderProgram(context(), ":/shaders/standard.vert", ":/shaders/color.frag");
 
@@ -172,6 +176,16 @@ void GLWidget::initializeGL() {
 
     gl = QOpenGLFunctions(context()->contextHandle());
 
+    std::vector<GLfloat> quadData = {-1.0, 1.0, 0.0, 0.0, 0.0,
+                                     -1.0, -1.0, 0.0, 0.0, 1.0,
+                                     1.0, 1.0, 0.0, 1.0, 0.0,
+                                     1.0, -1.0, 0.0, 1.0, 1.0};
+    m_quad = std::make_unique<OpenGLShape>();
+    m_quad->setVertexData(&quadData[0], quadData.size(), VBO::GEOMETRY_LAYOUT::LAYOUT_TRIANGLE_STRIP, 4);
+    m_quad->setAttribute(ShaderAttrib::POSITION, 3, 0, VBOAttribMarker::DATA_TYPE::FLOAT, false);
+    m_quad->setAttribute(ShaderAttrib::TEXCOORD, 2, 3*sizeof(GLfloat), VBOAttribMarker::DATA_TYPE::FLOAT, false);
+    m_quad->buildVAO();
+
     std::vector<GLfloat> sphereData = SPHERE_VERTEX_POSITIONS;
     m_sphere = std::make_unique<OpenGLShape>();
     m_sphere->setVertexData(&sphereData[0], sphereData.size(), VBO::GEOMETRY_LAYOUT::LAYOUT_TRIANGLES, NUM_SPHERE_VERTICES);
@@ -199,6 +213,7 @@ void GLWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
     s_size->parse(QString("%1,%2").arg(QString::number(w), QString::number(h)));
     camera->setAspectRatio(((float) w) / ((float) h));
+    m_FBO = std::make_unique<FBO>(1,FBO::DEPTH_STENCIL_ATTACHMENT::NONE,w,h,TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE);
     update();
 }
 
@@ -242,91 +257,55 @@ void GLWidget::handleAnimation() {
 }
 
 void GLWidget::paintGL() {
-    handleAnimation();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    handleAnimation();
 
-    //background skybox
-    skybox_shader->bind();
-    s_skybox->setValue(skybox_shader);
-    s_projection->setValue(skybox_shader);
-    s_view->setValue(skybox_shader);
-    skybox_shader->setUniformValue("resolutionX", this->size().width());
-    skybox_shader->setUniformValue("resolutionY", this->size().height());
-    float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
-    skybox_shader->setUniformValue("iTime", t);
-    foreach (const UniformVariable *var, *activeUniforms) {
-        var->setValue(skybox_shader);
-    }
-    glCullFace(GL_FRONT);
-    skybox_cube->draw();
-    glCullFace(GL_BACK);
-    skybox_shader->release();
+// Attempts to do anti-aliasing with framebuffers;
+//    m_FBO->bind();
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    //background skybox
+//    skybox_shader->bind();
+//    s_skybox->setValue(skybox_shader);
+
+//    //set uniforms
+//    s_projection->setValue(skybox_shader);
+//    s_view->setValue(skybox_shader);
+//    skybox_shader->setUniformValue("resolutionX", this->size().width());
+//    skybox_shader->setUniformValue("resolutionY", this->size().height());
+//    float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
+//    skybox_shader->setUniformValue("iTime", t);
+//    foreach (const UniformVariable *var, *activeUniforms) {
+//        var->setValue(skybox_shader);
+//    }
+//    glCullFace(GL_FRONT);
+//    m_quad->draw();
+//    glCullFace(GL_BACK);
+//    m_FBO->unbind();
+//    skybox_shader->release();
+
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
+//    m_FBO->getColorAttachment(0).bind();
+//    m_horizontalBlurProgram->bind();
+//    m_quad->draw();
+//    m_horizontalBlurProgram->release();
 
     if (current_shader) {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
         current_shader->bind();
 
         foreach (const UniformVariable *var, *activeUniforms) {
             var->setValue(current_shader);
         }
-
         current_shader->setUniformValue("resolutionX", this->size().width());
         current_shader->setUniformValue("resolutionY", this->size().height());
         float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
         current_shader->setUniformValue("iTime", t);
         skybox_cube->draw();
 
-    }
-    if (current_shader) {
         current_shader->release();
     }
 
-
-    // Geometry
-//    if (m_shape) {
-
-//        if (current_shader) {
-//            current_shader->bind();
-
-//            foreach (const UniformVariable *var, *activeUniforms) {
-//                var->setValue(current_shader);
-//            }
-
-//            current_shader->setUniformValue("resolutionX", this->size().width());
-//            current_shader->setUniformValue("resolutionY", this->size().height());
-//            float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
-//            current_shader->setUniformValue("iTime", t);
-
-//        }
-
-//        m_shape->draw();
-//        if (current_shader) {
-//            current_shader->release();
-//        }
-
-//        if (drawWireframe) {
-//            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//            switch(wireframeMode) {
-//            case WIREFRAME_NORMAL:
-//                wireframe_shader->bind();
-//                s_mvp->setValue(wireframe_shader);
-//                wireframe_shader->setUniformValue("color", 0, 0, 0, 1);
-//                m_shape->draw();
-//                wireframe_shader->release();
-//                break;
-//            case WIREFRAME_VERT:
-//                wireframe_shader2->bind();
-//                foreach (const UniformVariable *var, *activeUniforms) {
-//                    var->setValue(wireframe_shader2);
-//                }
-//                wireframe_shader2->setUniformValue("color", 0, 0, 0, 1);
-//                m_shape->draw();
-//                wireframe_shader2->release();
-//                break;
-//            }
-
-//            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-//        }
-//    }
 }
 
 void GLWidget::changeRenderMode(RenderType mode)

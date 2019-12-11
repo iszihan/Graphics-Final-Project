@@ -35,6 +35,15 @@ SOURCES += \
     gl/datatype/vboattribmarker.cpp \
     shapes/openglshape.cpp \
     gl/datatype/vao.cpp \
+    gl/datatype/FBO.cpp \
+    gl/textures/Texture.cpp \
+    gl/textures/Texture2D.cpp \
+    gl/textures/TextureParameters.cpp \
+    gl/textures/TextureParametersBuilder.cpp \
+    gl/textures/RenderBuffer.cpp \
+    gl/textures/DepthBuffer.cpp \
+    gl/GLDebug.cpp
+
 #    moc_glwidget.cpp \
 #    moc_uniformwidget.cpp \
 #    moc_mainwindow.cpp
@@ -58,6 +67,15 @@ HEADERS += \
     gl/datatype/vboattribmarker.h \
     gl/shaders/shaderattriblocations.h \
     gl/datatype/vao.h \
+    gl/datatype/FBO.h \
+    gl/textures/Texture.h \
+    gl/textures/Texture2D.h \
+    gl/textures/TextureParameters.h \
+    gl/textures/TextureParametersBuilder.h \
+    gl/textures/RenderBuffer.h \
+    gl/textures/DepthBuffer.h \
+    gl/GLDebug.h
+
 #    moc_predefs.h
 
 FORMS += ui/mainwindow.ui
@@ -101,10 +119,14 @@ OTHER_FILES += \
     skybox.vert \
     skybox.vars \
     soapbubble_raytrace.frag \
+    soapbubble_raytrace.vars \
     metal.vert \
     metal.frag \
     metal.vars \
-    flat.frag
+    flat.frag \
+    default.vars \
+    quad.vert \
+    horizontalBlur.frag
 
 DISTFILES += \
     shaders/normals/normals.vert \
