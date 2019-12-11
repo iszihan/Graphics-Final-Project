@@ -18,7 +18,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
-#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -31,31 +30,22 @@ public:
     QHBoxLayout *horizontalLayout;
     QVBoxLayout *verticalLayout;
     QLabel *label;
-    QPushButton *defaultShaderButton;
     QPushButton *shader1Button;
     QPushButton *shader2Button;
+    QPushButton *raymarchSbShaderButton;
+    QPushButton *raytraceSbShaderButton;
     QFrame *line;
     QVBoxLayout *verticalLayout_4;
     QLabel *label_2;
     QPushButton *sphereButton;
     QPushButton *cubeButton;
     QFrame *line_2;
-    QLabel *label_3;
-    QPushButton *animNoneButton;
-    QPushButton *animMoveButton;
-    QPushButton *animScaleButton;
-    QPushButton *animScaleMoveButton;
-    QPushButton *animRotate1Button;
-    QPushButton *animRotate2Button;
     QFrame *line_3;
-    QLabel *label_4;
     QFrame *line_4;
     QLabel *label_5;
     QCheckBox *wireframeCheckbox;
     QCheckBox *checkBox;
     QFrame *line_5;
-    QLabel *label_6;
-    QSpinBox *numWave;
     QSpacerItem *verticalSpacer;
     QVBoxLayout *verticalLayout_2;
     QSpacerItem *horizontalSpacer;
@@ -89,11 +79,6 @@ public:
 
         verticalLayout->addWidget(label);
 
-        defaultShaderButton = new QPushButton(centralWidget);
-        defaultShaderButton->setObjectName(QStringLiteral("defaultShaderButton"));
-
-        verticalLayout->addWidget(defaultShaderButton);
-
         shader1Button = new QPushButton(centralWidget);
         shader1Button->setObjectName(QStringLiteral("shader1Button"));
 
@@ -103,6 +88,16 @@ public:
         shader2Button->setObjectName(QStringLiteral("shader2Button"));
 
         verticalLayout->addWidget(shader2Button);
+
+        raymarchSbShaderButton = new QPushButton(centralWidget);
+        raymarchSbShaderButton->setObjectName(QStringLiteral("raymarchSbShaderButton"));
+
+        verticalLayout->addWidget(raymarchSbShaderButton);
+
+        raytraceSbShaderButton = new QPushButton(centralWidget);
+        raytraceSbShaderButton->setObjectName(QStringLiteral("raytraceSbShaderButton"));
+
+        verticalLayout->addWidget(raytraceSbShaderButton);
 
         line = new QFrame(centralWidget);
         line->setObjectName(QStringLiteral("line"));
@@ -139,52 +134,12 @@ public:
 
         verticalLayout->addWidget(line_2);
 
-        label_3 = new QLabel(centralWidget);
-        label_3->setObjectName(QStringLiteral("label_3"));
-
-        verticalLayout->addWidget(label_3);
-
-        animNoneButton = new QPushButton(centralWidget);
-        animNoneButton->setObjectName(QStringLiteral("animNoneButton"));
-
-        verticalLayout->addWidget(animNoneButton);
-
-        animMoveButton = new QPushButton(centralWidget);
-        animMoveButton->setObjectName(QStringLiteral("animMoveButton"));
-
-        verticalLayout->addWidget(animMoveButton);
-
-        animScaleButton = new QPushButton(centralWidget);
-        animScaleButton->setObjectName(QStringLiteral("animScaleButton"));
-
-        verticalLayout->addWidget(animScaleButton);
-
-        animScaleMoveButton = new QPushButton(centralWidget);
-        animScaleMoveButton->setObjectName(QStringLiteral("animScaleMoveButton"));
-
-        verticalLayout->addWidget(animScaleMoveButton);
-
-        animRotate1Button = new QPushButton(centralWidget);
-        animRotate1Button->setObjectName(QStringLiteral("animRotate1Button"));
-
-        verticalLayout->addWidget(animRotate1Button);
-
-        animRotate2Button = new QPushButton(centralWidget);
-        animRotate2Button->setObjectName(QStringLiteral("animRotate2Button"));
-
-        verticalLayout->addWidget(animRotate2Button);
-
         line_3 = new QFrame(centralWidget);
         line_3->setObjectName(QStringLiteral("line_3"));
         line_3->setFrameShape(QFrame::HLine);
         line_3->setFrameShadow(QFrame::Sunken);
 
         verticalLayout->addWidget(line_3);
-
-        label_4 = new QLabel(centralWidget);
-        label_4->setObjectName(QStringLiteral("label_4"));
-
-        verticalLayout->addWidget(label_4);
 
         line_4 = new QFrame(centralWidget);
         line_4->setObjectName(QStringLiteral("line_4"));
@@ -217,18 +172,6 @@ public:
         line_5->setFrameShadow(QFrame::Sunken);
 
         verticalLayout->addWidget(line_5);
-
-        label_6 = new QLabel(centralWidget);
-        label_6->setObjectName(QStringLiteral("label_6"));
-
-        verticalLayout->addWidget(label_6);
-
-        numWave = new QSpinBox(centralWidget);
-        numWave->setObjectName(QStringLiteral("numWave"));
-        numWave->setMinimum(1);
-        numWave->setMaximum(13);
-
-        verticalLayout->addWidget(numWave);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -280,24 +223,16 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Shader Visualizer", nullptr));
         label->setText(QApplication::translate("MainWindow", "Shaders:", nullptr));
-        defaultShaderButton->setText(QApplication::translate("MainWindow", "Default", nullptr));
         shader1Button->setText(QApplication::translate("MainWindow", "Metal", nullptr));
         shader2Button->setText(QApplication::translate("MainWindow", "Glass", nullptr));
+        raymarchSbShaderButton->setText(QApplication::translate("MainWindow", "Soap Bubble (Raymarched)", nullptr));
+        raytraceSbShaderButton->setText(QApplication::translate("MainWindow", "Soap Bubble (Raytraced)", nullptr));
         label_2->setText(QApplication::translate("MainWindow", "Shapes:", nullptr));
         sphereButton->setText(QApplication::translate("MainWindow", "Sphere", nullptr));
         cubeButton->setText(QApplication::translate("MainWindow", "Cube", nullptr));
-        label_3->setText(QApplication::translate("MainWindow", "Animations:", nullptr));
-        animNoneButton->setText(QApplication::translate("MainWindow", "None", nullptr));
-        animMoveButton->setText(QApplication::translate("MainWindow", "Move", nullptr));
-        animScaleButton->setText(QApplication::translate("MainWindow", "Scale", nullptr));
-        animScaleMoveButton->setText(QApplication::translate("MainWindow", "Move + Scale", nullptr));
-        animRotate1Button->setText(QApplication::translate("MainWindow", "Rotate1", nullptr));
-        animRotate2Button->setText(QApplication::translate("MainWindow", "Rotate2", nullptr));
-        label_4->setText(QApplication::translate("MainWindow", "Options:", nullptr));
         label_5->setText(QApplication::translate("MainWindow", "Wireframe:", nullptr));
         wireframeCheckbox->setText(QApplication::translate("MainWindow", "Enabled", nullptr));
         checkBox->setText(QApplication::translate("MainWindow", "Use Vertex Shader", nullptr));
-        label_6->setText(QApplication::translate("MainWindow", "Number of Wavelength for Interference", nullptr));
         tipsButton->setText(QApplication::translate("MainWindow", "Tips", nullptr));
     } // retranslateUi
 

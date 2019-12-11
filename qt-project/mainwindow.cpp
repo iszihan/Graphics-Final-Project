@@ -112,7 +112,7 @@ void MainWindow::init()
         loadShader(info.absolutePath() + "/" + info.baseName() + ".vert",
                    info.absolutePath() + "/" + info.baseName() + ".frag");
     } else {
-        loadShader(":/shaders/skybox.vert", ":/shaders/default.frag");
+        loadShader(":/shaders/skybox.vert", ":/shaders/flat.frag");
     }
 }
 
@@ -168,9 +168,14 @@ void MainWindow::closeEvent(QCloseEvent *e) {
     m_glwidget->saveUniforms(m_oldFrag);
 }
 
-void MainWindow::on_defaultShaderButton_clicked()
+void MainWindow::on_raymarchSbShaderButton_clicked()
 {
     loadShader(":/shaders/skybox.vert", ":/shaders/skybox.frag");
+}
+
+void MainWindow::on_raytraceSbShaderButton_clicked()
+{
+    loadShader(":/shaders/skybox.vert", ":/shaders/default.frag");
 }
 
 void MainWindow::on_animMoveButton_clicked()

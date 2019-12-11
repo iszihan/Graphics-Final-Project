@@ -15,8 +15,6 @@ uniform float r0;		// The R0 value to use in Schlick's approximation
 uniform float eta1D;		// The eta value to use initially
 uniform vec3  eta;              // Contains one eta for each channel (use eta.r, eta.g, eta.b in your code)
 
-//uniform int mouseX;
-//uniform int mouseY;
 const float PI = 3.141592653589793;
 
 const float sphereRadius = 0.5;

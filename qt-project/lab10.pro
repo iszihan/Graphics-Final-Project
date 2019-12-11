@@ -34,7 +34,10 @@ SOURCES += \
     gl/datatype/vbo.cpp \
     gl/datatype/vboattribmarker.cpp \
     shapes/openglshape.cpp \
-    gl/datatype/vao.cpp
+    gl/datatype/vao.cpp \
+#    moc_glwidget.cpp \
+#    moc_uniformwidget.cpp \
+#    moc_mainwindow.cpp
 
 HEADERS += \
     ui_mainwindow.h \
@@ -54,7 +57,8 @@ HEADERS += \
     gl/datatype/vbo.h \
     gl/datatype/vboattribmarker.h \
     gl/shaders/shaderattriblocations.h \
-    gl/datatype/vao.h
+    gl/datatype/vao.h \
+#    moc_predefs.h
 
 FORMS += ui/mainwindow.ui
 INCLUDEPATH += glm ui glew-1.10.0/include
@@ -100,7 +104,8 @@ OTHER_FILES += \
     default.vert \
     default.frag \
     metal.vert \
-    metal.frag
+    metal.frag \
+    flat.frag
 
 DISTFILES += \
     shaders/normals/normals.vert \

@@ -30,7 +30,9 @@ private slots:
 
     void on_cubeButton_clicked();
 
-    void on_defaultShaderButton_clicked();
+    void on_raymarchSbShaderButton_clicked();
+
+    void on_raytraceSbShaderButton_clicked();
 
     void on_animMoveButton_clicked();
 

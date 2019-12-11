@@ -37,13 +37,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="defaultShaderButton">
-        <property name="text">
-         <string>Default</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="shader1Button">
         <property name="text">
          <string>Metal</string>
@@ -54,6 +47,20 @@
        <widget class="QPushButton" name="shader2Button">
         <property name="text">
          <string>Glass</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="raymarchSbShaderButton">
+        <property name="text">
+         <string>Soap Bubble (Raymarched)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="raytraceSbShaderButton">
+        <property name="text">
+         <string>Soap Bubble (Raytraced)</string>
         </property>
        </widget>
       </item>
@@ -96,65 +103,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Animations:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="animNoneButton">
-        <property name="text">
-         <string>None</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="animMoveButton">
-        <property name="text">
-         <string>Move</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="animScaleButton">
-        <property name="text">
-         <string>Scale</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="animScaleMoveButton">
-        <property name="text">
-         <string>Move + Scale</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="animRotate1Button">
-        <property name="text">
-         <string>Rotate1</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="animRotate2Button">
-        <property name="text">
-         <string>Rotate2</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="Line" name="line_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Options:</string>
         </property>
        </widget>
       </item>
@@ -199,23 +150,6 @@
        <widget class="Line" name="line_5">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Number of Wavelength for Interference</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="numWave">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>13</number>
         </property>
        </widget>
       </item>

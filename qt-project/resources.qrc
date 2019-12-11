@@ -13,6 +13,7 @@
         <file>metal.vert</file>
         <file>metal.vars</file>
         <file>glass.vars</file>
+        <file>flat.frag</file>
     </qresource>
     <qresource prefix="/skybox">
         <file>negx.jpg</file>

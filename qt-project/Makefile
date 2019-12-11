@@ -480,6 +480,7 @@ qrc_resources.cpp: resources.qrc \
 		metal.vars \
 		standard.vert \
 		default.vert \
+		flat.frag \
 		skybox.frag \
 		metal.vert \
 		glass.frag \
