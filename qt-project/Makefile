@@ -472,16 +472,17 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resources.cpp
 qrc_resources.cpp: resources.qrc \
 		/usr/lib/qt5/bin/rcc \
+		soapbubble_raymarch.frag \
 		glass.vars \
-		default.frag \
 		skybox.vert \
+		soapbubble_raytrace.frag \
 		glass.vert \
 		metal.frag \
+		soapbubble_raymarch.vars \
 		metal.vars \
 		standard.vert \
 		default.vert \
 		flat.frag \
-		skybox.frag \
 		metal.vert \
 		glass.frag \
 		color.frag \

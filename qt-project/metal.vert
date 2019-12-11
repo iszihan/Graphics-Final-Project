@@ -20,10 +20,12 @@ void main()
 {
 
     vertex = ((view*model)*(vec4(position, 1.0))).xyz;
+
     vec4 camLightPosition = view*model*lightPosition;           // Light position in camera space
     vertexToLight = normalize(camLightPosition.xyz - vertex);
     vertexToCamera = -normalize(vertex);
     eyeNormal = normalize(mat3(transpose(inverse(view*model))) * normal);
+
     gl_Position = projection*view*model*(vec4(position,1.0));
     fragCoord = gl_Position.xy;
 

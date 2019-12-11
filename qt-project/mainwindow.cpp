@@ -170,12 +170,12 @@ void MainWindow::closeEvent(QCloseEvent *e) {
 
 void MainWindow::on_raymarchSbShaderButton_clicked()
 {
-    loadShader(":/shaders/skybox.vert", ":/shaders/skybox.frag");
+    loadShader(":/shaders/skybox.vert", ":/shaders/soapbubble_raymarch.frag");
 }
 
 void MainWindow::on_raytraceSbShaderButton_clicked()
 {
-    loadShader(":/shaders/skybox.vert", ":/shaders/default.frag");
+    loadShader(":/shaders/skybox.vert", ":/shaders/soapbubble_raytrace.frag");
 }
 
 void MainWindow::on_animMoveButton_clicked()

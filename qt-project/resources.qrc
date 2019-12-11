@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/shaders">
-        <file>skybox.frag</file>
+        <file>soapbubble_raymarch.frag</file>
         <file>standard.vert</file>
-        <file>default.frag</file>
+        <file>soapbubble_raytrace.frag</file>
         <file>default.vert</file>
         <file>skybox.vert</file>
         <file>color.frag</file>
@@ -14,6 +14,7 @@
         <file>metal.vars</file>
         <file>glass.vars</file>
         <file>flat.frag</file>
+        <file>soapbubble_raymarch.vars</file>
     </qresource>
     <qresource prefix="/skybox">
         <file>negx.jpg</file>

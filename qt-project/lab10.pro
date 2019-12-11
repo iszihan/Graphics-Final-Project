@@ -93,18 +93,17 @@ RESOURCES += \
 OTHER_FILES += \
     shaders/shader.frag \
     shaders/shader.vert \
-    metaball.frag \
     glass.frag \
     glass.vert \
     glass.vars \
-    skybox.frag \
+    soapbubble_raymarch.frag \
+    soapbubble_raymarch.vars \
     skybox.vert \
     skybox.vars \
-    bubble.frag \
-    default.vert \
-    default.frag \
+    soapbubble_raytrace.frag \
     metal.vert \
     metal.frag \
+    metal.vars \
     flat.frag
 
 DISTFILES += \
