@@ -61,9 +61,11 @@ struct Hit
     float t;	// solution to p=o+t*d
     vec3 n;	// normal
     Material m;	// material
+
+    bool isCollision; //if current hit is in collision with other spheres
 };
 
-const Hit noHit = Hit(1e10, vec3(0.f), Material(0.f, vec3(-1.f), vec3(-1.f), vec3(-1.f)));
+const Hit noHit = Hit(1e10, vec3(0.f), Material(0.f, vec3(-1.f), vec3(-1.f), vec3(-1.f)),false);
 
 struct Plane
 {
@@ -85,7 +87,7 @@ Hit intersectPlane(Plane p, Ray r)
     if (dotnd > 0.f)
         return noHit;
     float t = -(dot(r.o, p.n) + p.d) / dotnd;
-    return Hit(t, p.n, p.m);
+    return Hit(t, p.n, p.m,false);
 }
 
 vec4 sp_spectral_filter(vec4 col, float filmwidth, float cosi)
@@ -173,7 +175,7 @@ bool isInside(vec2 a, vec2 b)
     return a.x < b.x && a.y < b.y;
 }
 
-Hit intersectSphere(Sphere s, Ray r)
+Hit intersectSphere(Sphere s, Ray r, bool isCollision)
 {
     vec3 op = s.p - r.o;
     float b = dot(op, r.d);
@@ -188,7 +190,7 @@ Hit intersectSphere(Sphere s, Ray r)
     if (t < 0.f)
         return noHit;
 
-    return Hit(t, (r.o + t * r.d - s.p) / s.r, s.m);
+    return Hit(t, (r.o + t * r.d - s.p) / s.r, s.m, isCollision);
 }
 
 bool compare(inout Hit a, Hit b)
@@ -199,20 +201,237 @@ bool compare(inout Hit a, Hit b)
     }
     return false;
 }
+/*
+vec3 collision_detection(float t){
+    float eps=0.3;
 
+    for(int i=0;i<positions.length();i++){
+        for(int j=i+1;j<positions.length();j++){
+
+            if(distance(positions[i],positions[j]) < 2*sphereRadius+eps){
+
+            }
+
+        }
+    }
+
+
+}
+*/
 Hit intersectScene(Ray r)
 {
     float t = iTime / 5.0;
     //Plane p = Plane(0.f, vec3(0.f, 1.f, 0.f), Material(0.f, vec3(0.1f), vec3(0.5f, 0.4f, 0.3f), vec3(0.04f)));
-    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
-    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
-    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
+
+    vec3 p1= vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f);
+    vec3 p2= vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f);
+    vec3 p3= vec3(cos(t*1.3),1.f + cos(t*1.7),cos(t*0.7) - 5.f);
+
+//    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
+//    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
+//    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
+
+    //collision detection
+    float eps=0.01;
+/*
+    float t1x=t;
+    float t1y=t;
+    float t1z=t;
+
+    float t2x=t;
+    float t2y=t;
+    float t2z=t;
+
+    float t3x=t;
+    float t3y=t;
+    float t3z=t;
+
+   if(distance(p1,p2)< 2* sphereRadius + eps){
+
+        t1x = t1x -1.f;
+        t2x = t2x -1.f;
+    }
+    if(distance(p1,p3) < 2* sphereRadius + eps){
+
+        t1y = t1y - 1.f;
+        t3y = t3y - 1.f;
+    }
+    if(distance(p2,p3) < 2* sphereRadius + eps){
+        t2z = t2z - 1.f;
+        t3z = t3z - 1.f;
+
+    }
+
+    p1=vec3(cos(t1x*1.1),1.f + cos(t1y*1.3),cos(t1z*1.7) - 5.f);
+    p2=vec3(cos(t2x*0.7),1.f + cos(t2y*1.9),cos(t2z*2.3) - 5.f);
+    p3=vec3(cos(t3x*1.3),1.f + cos(t3y*1.7),cos(t3z*0.7) - 5.f);
+
+    /*
+    float eps=0.3;
+
+    float c11=1.1;
+    float c12=1.3;
+    float c13=1.7;
+
+    float c21=0.7;
+    float c22=1.9;
+    float c23=2.3;
+
+    float c31=1.3;
+    float c32=1.7;
+    float c33=0.7;
+
+
+    if(distance(p1,p2)< 2* sphereRadius + eps){
+
+        c11=-1.f * c11;
+        c21=-1.f * c21;
+
+        p1=vec3(cos(t*c11),1.f + cos(t*c12),cos(t*c13) - 5.f);
+        p2=vec3(cos(t*c21),1.f + cos(t*c22),cos(t*c23) - 5.f);
+    }
+    if(distance(p1,p3) < 2* sphereRadius + eps){
+
+        c12=-1.f * c12;
+        c32=-1.f * c32;
+
+        p1=vec3(cos(t*c11),1.f + cos(t*c12),cos(t*c13) - 5.f);
+        p3=vec3(cos(t*c31),1.f + cos(t*c32),cos(t*c33) - 5.f);
+
+    }
+    if(distance(p2,p3) < 2* sphereRadius + eps){
+        c23=-1.f*c23;
+        c33=-1.f*c33;
+
+        p2=vec3(cos(t*c21),1.f + cos(t*c22),cos(t*c23) - 5.f);
+        p3=vec3(cos(t*c31),1.f + cos(t*c32),cos(t*c33) - 5.f);
+
+    }*/
+
+
+    /*
+    float p1_x=cos(t*1.1);
+    float p1_y=1.f + cos(t*1.3);
+    float p1_z=cos(t*1.7) - 5.f;
+
+    float p2_x=cos(t*0.7);
+    float p2_y=1.f + cos(t*1.9);
+    float p2_z=cos(t*2.3) - 5.f;
+
+    float p3_x=cos(t*1.3);
+    float p3_y=1.f + cos(t*1.7);
+    float p3_z=cos(t*0.7) - 5.f;
+
+
+    if(distance(p1,p2)< 2* sphereRadius + eps){
+
+        p1_x=-1.f * p1_x;
+        p2_x=-1.f * p2_x;
+
+        p1=vec3(p1_x,p1_y,p1_z);
+        p2=vec3(p2_x,p2_y,p2_z);
+    }
+    if(distance(p1,p3) < 2* sphereRadius + eps){
+
+        p1_y=-1.f * p1_y;
+        p3_y=-1.f * p3_y;
+
+        p1=vec3(p1_x,p1_y,p1_z);
+        p3=vec3(p3_x,p3_y,p3_z);
+
+    }
+    if(distance(p2,p3) < 2* sphereRadius + eps){
+        p2_z= -1.f * p2_z;
+        p3_z= -1.f * p3_z;
+
+        p2=vec3(p2_x,p2_y,p2_z);
+        p3=vec3(p3_x,p3_y,p3_z);
+
+    }
+    */
+
+//    Material material_1;//(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f));
+//    Material material_2;//(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f));
+//    Material material_3;//(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f));
+
+//    material_1.isBubble=1.f;
+//    material_1.a=vec3(0.1f);
+//    material_1.d=vec3(0.f, 0.f, 0.2f);
+//    material_1.s=vec3(0.6f);
+
+//    material_2.isBubble=1.f;
+//    material_2.a=vec3(0.1f);
+//    material_2.d=vec3(0.f);
+//    material_2.s=vec3(0.55f, 0.56f, 0.55f);
+
+//    material_1.isBubble=1.f;
+//    material_1.a=vec3(0.1f);
+//    material_1.d=vec3(0.f);
+//    material_1.s=vec3(1.f, 0.77f, 0.34f);
+
+//    if(distance(p1,p2)< 2* sphereRadius + eps){
+
+//            material_1.a= vec3(1.f, 0.f, 0.f);
+//            material_2.a= vec3(1.f, 0.f, 0.f);
+//     }
+        /*if(distance(p1,p3) < 2* sphereRadius + eps){
+
+            p1_y=-1.f * p1_y;
+            p3_y=-1.f * p3_y;
+
+            p1=vec3(p1_x,p1_y,p1_z);
+            p3=vec3(p3_x,p3_y,p3_z);
+
+        }
+        if(distance(p2,p3) < 2* sphereRadius + eps){
+            p2_z= -1.f * p2_z;
+            p3_z= -1.f * p3_z;
+
+            p2=vec3(p2_x,p2_y,p2_z);
+            p3=vec3(p3_x,p3_y,p3_z);
+
+        }*/
+
+    bool m1_collision=false;
+    bool m2_collision=false;
+    bool m3_collision=false;
+
+    if(distance(p1,p2)< 2* sphereRadius + eps){
+
+        m1_collision=true;
+        m2_collision=true;
+
+     }
+     if(distance(p1,p3) < 2* sphereRadius + eps){
+         m1_collision=true;
+         m3_collision=true;
+
+      }
+      if(distance(p2,p3) < 2* sphereRadius + eps){
+
+          m2_collision=true;
+          m3_collision=true;
+
+      }
+
+
+
+
+
+    Sphere m1 = Sphere(0.5f, p1, Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
+    Sphere m2 = Sphere(0.5f, p2, Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
+    Sphere m3 = Sphere(0.5f, p3, Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
+//    Sphere m1 = Sphere(0.5f, p1, material_1);
+//    Sphere m2 = Sphere(0.5f, p2, material_2);
+//    Sphere m3 = Sphere(0.2f, p3, material_3);
+
+
 
     Hit hit = noHit;
     //compare(hit, intersectPlane(p, r));
-    compare(hit, intersectSphere(m1, r));
-    compare(hit, intersectSphere(m2, r));
-    compare(hit, intersectSphere(m3, r));
+    compare(hit, intersectSphere(m1, r, m1_collision));
+    compare(hit, intersectSphere(m2, r, m2_collision));
+    compare(hit, intersectSphere(m3, r, m3_collision));
     return hit;
 }
 
@@ -256,6 +475,10 @@ vec4 illuminateBubble(Hit hit, in vec3 pos , in vec3 camdir)
     float filmWidth = varfilmwidth + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
 
     vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(normal, camdir));
+
+    if(hit.isCollision){
+        bubbleColor=vec4(1.f,0.f,0.f,0.f);
+    }
 
     return mix(backgroundColor, bubbleColor, F);
 //    return bubbleColor;
