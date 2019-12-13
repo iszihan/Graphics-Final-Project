@@ -27,7 +27,7 @@ UniformVariable *GLWidget::s_mouse = NULL;
 std::vector<UniformVariable*> *GLWidget::s_staticVars = NULL;
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), m_FBO(nullptr), m_sphere(nullptr), m_cube(nullptr), m_shape(nullptr), skybox_cube(nullptr)
+    : QGLWidget(format, parent), ifavoid(false), m_FBO(nullptr), m_sphere(nullptr), m_cube(nullptr), m_shape(nullptr), skybox_cube(nullptr)
 {
     camera = new OrbitingCamera();
     QObject::connect(camera, SIGNAL(viewChanged(glm::mat4)), this, SLOT(viewChanged(glm::mat4)));
@@ -74,6 +74,12 @@ GLWidget::~GLWidget() {
     foreach (const UniformVariable *v, permUniforms) {
         delete v;
     }
+}
+
+void GLWidget::updateifAvoid(){
+
+    ifavoid = !ifavoid;
+
 }
 
 bool GLWidget::saveUniforms(QString path)
@@ -304,7 +310,7 @@ void GLWidget::paintGL() {
 
     //calculate bubble positions
     update_positions(&m_p1, &m_p2, &m_p3,
-                     &m_v1, &m_v2, &m_v3);
+                     &m_v1, &m_v2, &m_v3, ifavoid);
     //std::cout<<"p1: "<<m_p1.x<<", "<<m_p1.y<<", "<<m_p1.z<<std::endl;
     //std::cout<<"p2: "<<m_p2.x<<", "<<m_p2.y<<", "<<m_p2.z<<std::endl;
     //std::cout<<"p3: "<<m_p3.x<<", "<<m_p3.y<<", "<<m_p3.z<<std::endl;

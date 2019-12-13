@@ -13,14 +13,14 @@ static float y_lower=-3.f;
 static float z_lower=-3.f;
 
 void update_positions(glm::vec3* p1, glm::vec3* p2, glm::vec3* p3,
-                      glm::vec3* v1, glm::vec3* v2, glm::vec3* v3){
+                      glm::vec3* v1, glm::vec3* v2, glm::vec3* v3, bool isAvoid){
 
     //change velocity if hit wall
     checkForWalls(p1,v1);
     checkForWalls(p2,v2);
     checkForWalls(p3,v3);
 
-
+    if(isAvoid){
     bool collide12=isCollision(p1,p2,v1,v2);
     bool collide13=isCollision(p1,p3,v1,v3);
     bool collide23=isCollision(p2,p3,v2,v3);
@@ -71,6 +71,7 @@ void update_positions(glm::vec3* p1, glm::vec3* p2, glm::vec3* p3,
         glm::vec3 temp=*v2;
         *v2=*v3;
         *v3=temp;
+    }
     }
 
     //update positions;

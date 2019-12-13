@@ -30,6 +30,7 @@ public:
 
     bool saveUniforms(QString path);
     bool loadUniforms(QString path);
+    void updateifAvoid();
 
     static UniformVariable* s_skybox;
     static UniformVariable* s_model;
@@ -82,6 +83,7 @@ private:
     glm::vec3 m_p3;
     glm::vec3 m_v3;
 
+    bool ifavoid;
 
     std::unique_ptr<OpenGLShape> m_sphere;
     std::unique_ptr<OpenGLShape> m_cube;
