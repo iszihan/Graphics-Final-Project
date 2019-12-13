@@ -42,7 +42,8 @@ SOURCES += \
     gl/textures/TextureParametersBuilder.cpp \
     gl/textures/RenderBuffer.cpp \
     gl/textures/DepthBuffer.cpp \
-    gl/GLDebug.cpp
+    gl/GLDebug.cpp \
+    position.cpp
 
 #    moc_glwidget.cpp \
 #    moc_uniformwidget.cpp \
@@ -74,7 +75,8 @@ HEADERS += \
     gl/textures/TextureParametersBuilder.h \
     gl/textures/RenderBuffer.h \
     gl/textures/DepthBuffer.h \
-    gl/GLDebug.h
+    gl/GLDebug.h \
+    position.h
 
 #    moc_predefs.h
 

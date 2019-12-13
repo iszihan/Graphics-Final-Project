@@ -73,6 +73,16 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
+
+    //bubble positions
+    glm::vec3 m_p1;
+    glm::vec3 m_v1;
+    glm::vec3 m_p2;
+    glm::vec3 m_v2;
+    glm::vec3 m_p3;
+    glm::vec3 m_v3;
+
+
     std::unique_ptr<OpenGLShape> m_sphere;
     std::unique_ptr<OpenGLShape> m_cube;
     std::unique_ptr<OpenGLShape> m_quad;

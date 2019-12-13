@@ -28,6 +28,11 @@ mat3 sparsespfilta[13];
 mat3 sparsespfiltb[13];
 mat3 sparsespfiltconst;
 
+//get bubble positions
+uniform vec3 unif_p1;
+uniform vec3 unif_p2;
+uniform vec3 unif_p3;
+
 #define MAX_BOUNCES 3
 #define epsilon 0.001
 #define PI 3.14159265
@@ -232,7 +237,7 @@ Hit intersectScene(Ray r)
 //    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
 
     //collision detection
-    float eps=0.01;
+    float eps=0.3;
 /*
     float t1x=t;
     float t1y=t;
@@ -391,6 +396,9 @@ Hit intersectScene(Ray r)
             p3=vec3(p3_x,p3_y,p3_z);
 
         }*/
+    p1=unif_p1;
+    p2=unif_p2;
+    p3=unif_p3;
 
     bool m1_collision=false;
     bool m2_collision=false;

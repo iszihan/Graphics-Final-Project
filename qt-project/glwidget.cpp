@@ -12,6 +12,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "gl/textures/Texture2D.h"
 
+#include "position.h"
+#include <iostream>
+
 
 UniformVariable *GLWidget::s_skybox = NULL;
 UniformVariable *GLWidget::s_projection = NULL;
@@ -47,6 +50,16 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     wireframeMode = WIREFRAME_NORMAL;
     mouseDown = false;
     setMouseTracking(true);
+
+    //initialize bubble positions
+    m_p1=glm::vec3(0,1,0);
+    m_v1=glm::vec3(1,-1,-1);
+
+    m_p2=glm::vec3(1,-1,-1);
+    m_v2=glm::vec3(-1,1,1);
+
+    m_p3=glm::vec3(-1,1,0);
+    m_v3=glm::vec3(1,1,1);
 }
 
 GLWidget::~GLWidget() {
@@ -289,6 +302,13 @@ void GLWidget::paintGL() {
 //    m_quad->draw();
 //    m_horizontalBlurProgram->release();
 
+    //calculate bubble positions
+    update_positions(&m_p1, &m_p2, &m_p3,
+                     &m_v1, &m_v2, &m_v3);
+    //std::cout<<"p1: "<<m_p1.x<<", "<<m_p1.y<<", "<<m_p1.z<<std::endl;
+    //std::cout<<"p2: "<<m_p2.x<<", "<<m_p2.y<<", "<<m_p2.z<<std::endl;
+    //std::cout<<"p3: "<<m_p3.x<<", "<<m_p3.y<<", "<<m_p3.z<<std::endl;
+
     if (current_shader) {
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -301,6 +321,15 @@ void GLWidget::paintGL() {
         current_shader->setUniformValue("resolutionY", this->size().height());
         float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
         current_shader->setUniformValue("iTime", t);
+        gl.glUniform3fv(gl.glGetUniformLocation(current_shader->programId(), "unif_p1"),1, glm::value_ptr(m_p1));
+        gl.glUniform3fv(gl.glGetUniformLocation(current_shader->programId(), "unif_p2"),1, glm::value_ptr(m_p2));
+        gl.glUniform3fv(gl.glGetUniformLocation(current_shader->programId(), "unif_p3"),1, glm::value_ptr(m_p3));
+
+        //pass in positions as uniform
+        //s_size = new UniformVariable(this->context()->contextHandle());
+        //s_size->setName("size");
+        //s_size->setType(UniformVariable::TYPE_FLOAT2);
+
         skybox_cube->draw();
 
         current_shader->release();
