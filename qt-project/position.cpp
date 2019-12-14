@@ -3,7 +3,7 @@
 
 static float radius=0.5f;
 static float eps=0.1f;
-static float step_length=0.07f;
+static float step_length=0.03f;
 
 static float x_upper=3.f;
 static float y_upper=3.f;
