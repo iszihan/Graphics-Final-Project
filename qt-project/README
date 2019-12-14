@@ -1,0 +1,33 @@
+This project is based on lab10
+Features implemented: soap bubble, metaball, GPU raytracing, Collision Detection
+
+To load this project:
+	load lab10.pro to qtcreator
+
+To use the program:
+	
+	run the project
+
+To view GPU raytraced soap bubbles with collision detection feature:
+	
+	click Soap Bubble (Raytraced) button
+
+	--> The scene initially contains 3 bubbles randomly moving
+	    
+	    The bubbles will be highlighted as RED if they are too close to each other
+	     
+            To make bubbles avoid collision with each other:
+		
+		click :Enable/Disable Collision to enable or disable collision avoidance
+
+To view Metaball feature:
+	
+	click Soap Bubble (Raymarched)
+
+To view Metal like metaball:
+
+	click Metal
+
+To view Glass like metaball:
+	
+	Click Glass and change "float r0" on the right side bar to 0.3
