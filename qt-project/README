@@ -1,6 +1,9 @@
 This project is based on lab10
 Features implemented: soap bubble, metaball, GPU raytracing, Collision Detection
 
+Here, soap bubble refers to a purely sphere which looks like a soap bubble. And Metaball refers to the merge effect when two soap bubble are
+close to each other.
+
 To load this project:
 	load lab10.pro to qtcreator
 
