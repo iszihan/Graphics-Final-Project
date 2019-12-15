@@ -1,3 +1,7 @@
+This Handin may not be compiled successfully. As instructed by the TAs, we have made our github repository
+public. If This handin does not work, please clone the following project from github:
+	https://github.com/MangoManGeek/Graphics-Final-Project
+
 This project is based on lab10
 Features implemented: soap bubble, metaball, GPU raytracing, Collision Detection
 
