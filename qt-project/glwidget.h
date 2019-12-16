@@ -30,9 +30,9 @@ public:
 
     bool saveUniforms(QString path);
     bool loadUniforms(QString path);
-    void updateifAvoid();
 
     static UniformVariable* s_skybox;
+    static UniformVariable* s_sphpos;
     static UniformVariable* s_model;
     static UniformVariable* s_view;
     static UniformVariable* s_projection;
@@ -40,6 +40,8 @@ public:
     static UniformVariable* s_time;
     static UniformVariable* s_size;
     static UniformVariable* s_mouse;
+
+    static UniformVariable* uni_firstPass;
 
     static std::vector<UniformVariable*> *s_staticVars;
 
@@ -74,17 +76,6 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
-
-    //bubble positions
-    glm::vec3 m_p1;
-    glm::vec3 m_v1;
-    glm::vec3 m_p2;
-    glm::vec3 m_v2;
-    glm::vec3 m_p3;
-    glm::vec3 m_v3;
-
-    bool ifavoid;
-
     std::unique_ptr<OpenGLShape> m_sphere;
     std::unique_ptr<OpenGLShape> m_cube;
     std::unique_ptr<OpenGLShape> m_quad;
@@ -92,12 +83,24 @@ private:
     Camera *camera;
     std::unique_ptr<OpenGLShape> skybox_cube;
     QGLShaderProgram *skybox_shader;
+    QGLShaderProgram *m_sphereUpdateShader;
+    QGLShaderProgram *m_sphereDrawShader;
     QGLShaderProgram *m_horizontalBlurProgram;
     QGLShaderProgram *wireframe_shader;
     QGLShaderProgram *wireframe_shader2;
     QGLShaderProgram *current_shader;
 
     std::unique_ptr<FBO> m_FBO;
+    int m_width;
+    int m_height;
+
+    std::shared_ptr<FBO> m_particlesFBO1;
+    std::shared_ptr<FBO> m_particlesFBO2;
+    bool m_firstPass;
+    bool m_evenPass;
+    int m_numParticles;
+    GLuint m_particlesVAO;
+
 
     QList<const UniformVariable*> *activeUniforms;
     QList<const UniformVariable*> permUniforms;
@@ -117,6 +120,8 @@ private:
     WireframeType wireframeMode;
 
     void handleAnimation();
+    void setParticleViewport();
+
 
     RenderType m_renderMode;
 

@@ -35,7 +35,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = final1.0.0
-DISTDIR = /gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/.tmp/final1.0.0
+DISTDIR = /gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/.tmp/final1.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) -lGLU -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Xml -lQt5Core -lGL -lpthread 
@@ -70,8 +70,7 @@ SOURCES       = main.cpp \
 		gl/textures/TextureParametersBuilder.cpp \
 		gl/textures/RenderBuffer.cpp \
 		gl/textures/DepthBuffer.cpp \
-		gl/GLDebug.cpp \
-		position.cpp qrc_resources.cpp \
+		gl/GLDebug.cpp qrc_resources.cpp \
 		moc_glwidget.cpp \
 		moc_mainwindow.cpp \
 		moc_uniformwidget.cpp \
@@ -98,7 +97,6 @@ OBJECTS       = main.o \
 		RenderBuffer.o \
 		DepthBuffer.o \
 		GLDebug.o \
-		position.o \
 		qrc_resources.o \
 		moc_glwidget.o \
 		moc_mainwindow.o \
@@ -228,8 +226,7 @@ DIST          = shaders/normals/normals.vert \
 		gl/textures/TextureParametersBuilder.h \
 		gl/textures/RenderBuffer.h \
 		gl/textures/DepthBuffer.h \
-		gl/GLDebug.h \
-		position.h main.cpp \
+		gl/GLDebug.h main.cpp \
 		glew-1.10.0/src/glew.c \
 		glwidget.cpp \
 		mainwindow.cpp \
@@ -249,8 +246,7 @@ DIST          = shaders/normals/normals.vert \
 		gl/textures/TextureParametersBuilder.cpp \
 		gl/textures/RenderBuffer.cpp \
 		gl/textures/DepthBuffer.cpp \
-		gl/GLDebug.cpp \
-		position.cpp
+		gl/GLDebug.cpp
 QMAKE_TARGET  = final
 DESTDIR       = 
 TARGET        = final
@@ -477,8 +473,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ui_mainwindow.h glew-1.10.0/include/GL/glew.h glwidget.h mainwindow.h uniforms/uniformvariable.h lib/common.h uniforms/uniformwidget.h camera/orbitingcamera.h camera/camera.h uniforms/varsfile.h shapes/cube.h lib/resourceloader.h shapes/sphere.h shapes/openglshape.h gl/datatype/vbo.h gl/datatype/vboattribmarker.h gl/shaders/shaderattriblocations.h gl/datatype/vao.h gl/datatype/FBO.h gl/textures/Texture.h gl/textures/Texture2D.h gl/textures/TextureParameters.h gl/textures/TextureParametersBuilder.h gl/textures/RenderBuffer.h gl/textures/DepthBuffer.h gl/GLDebug.h position.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp glew-1.10.0/src/glew.c glwidget.cpp mainwindow.cpp uniforms/uniformvariable.cpp uniforms/uniformwidget.cpp camera/orbitingcamera.cpp uniforms/varsfile.cpp lib/resourceloader.cpp gl/datatype/vbo.cpp gl/datatype/vboattribmarker.cpp shapes/openglshape.cpp gl/datatype/vao.cpp gl/datatype/FBO.cpp gl/textures/Texture.cpp gl/textures/Texture2D.cpp gl/textures/TextureParameters.cpp gl/textures/TextureParametersBuilder.cpp gl/textures/RenderBuffer.cpp gl/textures/DepthBuffer.cpp gl/GLDebug.cpp position.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ui_mainwindow.h glew-1.10.0/include/GL/glew.h glwidget.h mainwindow.h uniforms/uniformvariable.h lib/common.h uniforms/uniformwidget.h camera/orbitingcamera.h camera/camera.h uniforms/varsfile.h shapes/cube.h lib/resourceloader.h shapes/sphere.h shapes/openglshape.h gl/datatype/vbo.h gl/datatype/vboattribmarker.h gl/shaders/shaderattriblocations.h gl/datatype/vao.h gl/datatype/FBO.h gl/textures/Texture.h gl/textures/Texture2D.h gl/textures/TextureParameters.h gl/textures/TextureParametersBuilder.h gl/textures/RenderBuffer.h gl/textures/DepthBuffer.h gl/GLDebug.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp glew-1.10.0/src/glew.c glwidget.cpp mainwindow.cpp uniforms/uniformvariable.cpp uniforms/uniformwidget.cpp camera/orbitingcamera.cpp uniforms/varsfile.cpp lib/resourceloader.cpp gl/datatype/vbo.cpp gl/datatype/vboattribmarker.cpp shapes/openglshape.cpp gl/datatype/vao.cpp gl/datatype/FBO.cpp gl/textures/Texture.cpp gl/textures/Texture2D.cpp gl/textures/TextureParameters.cpp gl/textures/TextureParametersBuilder.cpp gl/textures/RenderBuffer.cpp gl/textures/DepthBuffer.cpp gl/GLDebug.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ui/mainwindow.ui $(DISTDIR)/
 
 
@@ -510,10 +506,12 @@ qrc_resources.cpp: resources.qrc \
 		/usr/lib/qt5/bin/rcc \
 		glass.vert \
 		glass.vars \
+		particles_update.frag \
 		soapbubble_raytrace.frag \
 		soapbubble_raymarch.vars \
 		metal.vert \
 		bubble.frag \
+		particles_draw.vert \
 		metal.vars \
 		skybox.vert \
 		glass.frag \
@@ -524,6 +522,7 @@ qrc_resources.cpp: resources.qrc \
 		metal.frag \
 		soapbubble_raytrace.vars \
 		flat.frag \
+		particles_draw.frag \
 		color.frag \
 		horizontalBlur.frag \
 		negx.jpg \
@@ -631,7 +630,7 @@ moc_glwidget.cpp: shapes/openglshape.h \
 		glwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include glwidget.h -o moc_glwidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include glwidget.h -o moc_glwidget.cpp
 
 moc_mainwindow.cpp: glwidget.h \
 		shapes/openglshape.h \
@@ -722,7 +721,7 @@ moc_mainwindow.cpp: glwidget.h \
 		mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 moc_uniformwidget.cpp: glwidget.h \
 		shapes/openglshape.h \
@@ -813,7 +812,7 @@ moc_uniformwidget.cpp: glwidget.h \
 		uniforms/uniformwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include uniforms/uniformwidget.h -o moc_uniformwidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include uniforms/uniformwidget.h -o moc_uniformwidget.cpp
 
 moc_orbitingcamera.cpp: camera/camera.h \
 		glm/glm.hpp \
@@ -895,7 +894,7 @@ moc_orbitingcamera.cpp: camera/camera.h \
 		camera/orbitingcamera.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camera/orbitingcamera.h -o moc_orbitingcamera.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camera/orbitingcamera.h -o moc_orbitingcamera.cpp
 
 moc_camera.cpp: glm/glm.hpp \
 		glm/detail/_fixes.hpp \
@@ -976,7 +975,7 @@ moc_camera.cpp: glm/glm.hpp \
 		camera/camera.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/dhuo/Desktop/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camera/camera.h -o moc_camera.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glm -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/ui -I/gpfs/main/home/zling1/course/csci1230-intro-to-graphics/Graphics-Final-Project/qt-project/glew-1.10.0/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camera/camera.h -o moc_camera.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1624,85 +1623,6 @@ DepthBuffer.o: gl/textures/DepthBuffer.cpp gl/textures/DepthBuffer.h \
 GLDebug.o: gl/GLDebug.cpp gl/GLDebug.h \
 		glew-1.10.0/include/GL/glew.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GLDebug.o gl/GLDebug.cpp
-
-position.o: position.cpp position.h \
-		glm/glm.hpp \
-		glm/detail/_fixes.hpp \
-		glm/fwd.hpp \
-		glm/detail/type_int.hpp \
-		glm/detail/setup.hpp \
-		glm/detail/type_float.hpp \
-		glm/detail/type_vec.hpp \
-		glm/detail/precision.hpp \
-		glm/detail/type_mat.hpp \
-		glm/vec2.hpp \
-		glm/detail/type_vec2.hpp \
-		glm/detail/_swizzle.hpp \
-		glm/detail/_swizzle_func.hpp \
-		glm/detail/type_vec2.inl \
-		glm/vec3.hpp \
-		glm/detail/type_vec3.hpp \
-		glm/detail/type_vec3.inl \
-		glm/vec4.hpp \
-		glm/detail/type_vec4.hpp \
-		glm/detail/type_vec4.inl \
-		glm/mat2x2.hpp \
-		glm/detail/type_mat2x2.hpp \
-		glm/detail/type_mat2x2.inl \
-		glm/mat2x3.hpp \
-		glm/detail/type_mat2x3.hpp \
-		glm/detail/type_mat2x3.inl \
-		glm/mat2x4.hpp \
-		glm/detail/type_mat2x4.hpp \
-		glm/detail/type_mat2x4.inl \
-		glm/mat3x2.hpp \
-		glm/detail/type_mat3x2.hpp \
-		glm/detail/type_mat3x2.inl \
-		glm/mat3x3.hpp \
-		glm/detail/type_mat3x3.hpp \
-		glm/detail/type_mat3x3.inl \
-		glm/mat3x4.hpp \
-		glm/detail/type_mat3x4.hpp \
-		glm/detail/type_mat3x4.inl \
-		glm/mat4x2.hpp \
-		glm/detail/type_mat4x2.hpp \
-		glm/detail/type_mat4x2.inl \
-		glm/mat4x3.hpp \
-		glm/detail/type_mat4x3.hpp \
-		glm/detail/type_mat4x3.inl \
-		glm/mat4x4.hpp \
-		glm/detail/type_mat4x4.hpp \
-		glm/detail/type_mat4x4.inl \
-		glm/trigonometric.hpp \
-		glm/detail/func_trigonometric.hpp \
-		glm/detail/func_trigonometric.inl \
-		glm/detail/_vectorize.hpp \
-		glm/detail/type_vec1.hpp \
-		glm/detail/type_vec1.inl \
-		glm/exponential.hpp \
-		glm/detail/func_exponential.hpp \
-		glm/detail/func_exponential.inl \
-		glm/detail/func_vector_relational.hpp \
-		glm/detail/func_vector_relational.inl \
-		glm/common.hpp \
-		glm/detail/func_common.hpp \
-		glm/detail/func_common.inl \
-		glm/packing.hpp \
-		glm/detail/func_packing.hpp \
-		glm/detail/func_packing.inl \
-		glm/detail/type_half.hpp \
-		glm/detail/type_half.inl \
-		glm/geometric.hpp \
-		glm/detail/func_geometric.hpp \
-		glm/detail/func_geometric.inl \
-		glm/matrix.hpp \
-		glm/detail/func_matrix.hpp \
-		glm/detail/func_matrix.inl \
-		glm/vector_relational.hpp \
-		glm/integer.hpp \
-		glm/detail/func_integer.hpp \
-		glm/detail/func_integer.inl
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o position.o position.cpp
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp

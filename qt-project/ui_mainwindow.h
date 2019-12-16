@@ -38,6 +38,7 @@ public:
     QVBoxLayout *verticalLayout_4;
     QLabel *label_2;
     QPushButton *sphereButton;
+    QPushButton *cubeButton;
     QFrame *line_2;
     QFrame *line_3;
     QFrame *line_4;
@@ -45,7 +46,6 @@ public:
     QCheckBox *wireframeCheckbox;
     QCheckBox *checkBox;
     QFrame *line_5;
-    QPushButton *cubeButton;
     QSpacerItem *verticalSpacer;
     QVBoxLayout *verticalLayout_2;
     QSpacerItem *horizontalSpacer;
@@ -122,6 +122,11 @@ public:
 
         verticalLayout->addWidget(sphereButton);
 
+        cubeButton = new QPushButton(centralWidget);
+        cubeButton->setObjectName(QStringLiteral("cubeButton"));
+
+        verticalLayout->addWidget(cubeButton);
+
         line_2 = new QFrame(centralWidget);
         line_2->setObjectName(QStringLiteral("line_2"));
         line_2->setFrameShape(QFrame::HLine);
@@ -167,11 +172,6 @@ public:
         line_5->setFrameShadow(QFrame::Sunken);
 
         verticalLayout->addWidget(line_5);
-
-        cubeButton = new QPushButton(centralWidget);
-        cubeButton->setObjectName(QStringLiteral("cubeButton"));
-
-        verticalLayout->addWidget(cubeButton);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -229,10 +229,10 @@ public:
         raytraceSbShaderButton->setText(QApplication::translate("MainWindow", "Soap Bubble (Raytraced)", nullptr));
         label_2->setText(QApplication::translate("MainWindow", "Shapes:", nullptr));
         sphereButton->setText(QApplication::translate("MainWindow", "Sphere", nullptr));
+        cubeButton->setText(QApplication::translate("MainWindow", "Cube", nullptr));
         label_5->setText(QApplication::translate("MainWindow", "Wireframe:", nullptr));
         wireframeCheckbox->setText(QApplication::translate("MainWindow", "Enabled", nullptr));
         checkBox->setText(QApplication::translate("MainWindow", "Use Vertex Shader", nullptr));
-        cubeButton->setText(QApplication::translate("MainWindow", "Enable/Disable Collision ", nullptr));
         tipsButton->setText(QApplication::translate("MainWindow", "Tips", nullptr));
     } // retranslateUi
 

@@ -75,9 +75,7 @@ void MainWindow::on_sphereButton_clicked() {
 }
 
 void MainWindow::on_cubeButton_clicked() {
-//    m_glwidget->changeRenderMode(SHAPE_CUBE);
-
-    m_glwidget->updateifAvoid();
+    m_glwidget->changeRenderMode(SHAPE_CUBE);
 }
 
 void MainWindow::loadShader(QString vert, QString frag) {

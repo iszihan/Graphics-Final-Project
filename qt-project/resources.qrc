@@ -18,6 +18,9 @@
         <file>soapbubble_raytrace.vars</file>
         <file>quad.vert</file>
         <file>horizontalBlur.frag</file>
+        <file>particles_update.frag</file>
+        <file>particles_draw.frag</file>
+        <file>particles_draw.vert</file>
     </qresource>
     <qresource prefix="/skybox">
         <file>negx.jpg</file>

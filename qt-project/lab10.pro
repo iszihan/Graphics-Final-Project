@@ -42,8 +42,7 @@ SOURCES += \
     gl/textures/TextureParametersBuilder.cpp \
     gl/textures/RenderBuffer.cpp \
     gl/textures/DepthBuffer.cpp \
-    gl/GLDebug.cpp \
-    position.cpp
+    gl/GLDebug.cpp
 
 #    moc_glwidget.cpp \
 #    moc_uniformwidget.cpp \
@@ -75,8 +74,7 @@ HEADERS += \
     gl/textures/TextureParametersBuilder.h \
     gl/textures/RenderBuffer.h \
     gl/textures/DepthBuffer.h \
-    gl/GLDebug.h \
-    position.h
+    gl/GLDebug.h
 
 #    moc_predefs.h
 
@@ -128,7 +126,11 @@ OTHER_FILES += \
     flat.frag \
     default.vars \
     quad.vert \
-    horizontalBlur.frag
+    horizontalBlur.frag \
+    particles_update.frag \
+    particles_draw.vert \
+    particles_draw.frag
+
 
 DISTFILES += \
     shaders/normals/normals.vert \

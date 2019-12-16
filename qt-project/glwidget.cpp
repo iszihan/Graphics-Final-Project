@@ -11,10 +11,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "gl/textures/Texture2D.h"
-
-#include "position.h"
 #include <iostream>
-
 
 UniformVariable *GLWidget::s_skybox = NULL;
 UniformVariable *GLWidget::s_projection = NULL;
@@ -27,7 +24,9 @@ UniformVariable *GLWidget::s_mouse = NULL;
 std::vector<UniformVariable*> *GLWidget::s_staticVars = NULL;
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), ifavoid(false), m_FBO(nullptr), m_sphere(nullptr), m_cube(nullptr), m_shape(nullptr), skybox_cube(nullptr)
+    : QGLWidget(format, parent), m_width(width()), m_height(height()), m_FBO(nullptr), m_sphere(nullptr), m_cube(nullptr),m_quad(nullptr),
+      m_particlesFBO1(nullptr), m_particlesFBO2(nullptr),
+      m_shape(nullptr), skybox_cube(nullptr), m_numParticles(3), m_firstPass(true), m_evenPass(true)
 {
     camera = new OrbitingCamera();
     QObject::connect(camera, SIGNAL(viewChanged(glm::mat4)), this, SLOT(viewChanged(glm::mat4)));
@@ -50,16 +49,6 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     wireframeMode = WIREFRAME_NORMAL;
     mouseDown = false;
     setMouseTracking(true);
-
-    //initialize bubble positions
-    m_p1=glm::vec3(0,1,0);
-    m_v1=glm::vec3(1,-1,-1);
-
-    m_p2=glm::vec3(1,-1,-1);
-    m_v2=glm::vec3(-1,1,1);
-
-    m_p3=glm::vec3(-1,1,0);
-    m_v3=glm::vec3(1,1,1);
 }
 
 GLWidget::~GLWidget() {
@@ -74,11 +63,7 @@ GLWidget::~GLWidget() {
     foreach (const UniformVariable *v, permUniforms) {
         delete v;
     }
-}
-
-void GLWidget::updateifAvoid(){
-
-    ifavoid = !ifavoid;
+    glDeleteVertexArrays(1, &m_particlesVAO);
 
 }
 
@@ -133,7 +118,7 @@ bool GLWidget::loadUniforms(QString path)
 void GLWidget::initializeGL() {
     ResourceLoader::initializeGlew();
 
-    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_CUBE_MAP);
@@ -144,10 +129,11 @@ void GLWidget::initializeGL() {
     glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    m_horizontalBlurProgram = ResourceLoader::newShaderProgram(context(),
-                ":/shaders/quad.vert", ":/shaders/horizontalBlur.frag");
-    skybox_shader = ResourceLoader::newShaderProgram(context(), ":/shaders/skybox.vert", ":/shaders/soapbubble_raymarch.frag");
-    wireframe_shader = ResourceLoader::newShaderProgram(context(), ":/shaders/standard.vert", ":/shaders/color.frag");
+    m_horizontalBlurProgram = ResourceLoader::newShaderProgram(context(),":/shaders/quad.vert", ":/shaders/horizontalBlur.frag");
+//    skybox_shader = ResourceLoader::newShaderProgram(context(), ":/shaders/skybox.vert", ":/shaders/soapbubble_raytrace.frag");
+    m_sphereUpdateShader = ResourceLoader::newShaderProgram(context(), ":/shaders/quad.vert", ":/shaders/particles_update.frag");
+    m_sphereDrawShader = ResourceLoader::newShaderProgram(context(),":/shaders/particles_draw.vert", ":/shaders/particles_draw.frag");
+//    wireframe_shader = ResourceLoader::newShaderProgram(context(), ":/shaders/standard.vert", ":/shaders/color.frag");
 
     s_skybox = new UniformVariable(this->context()->contextHandle());
     s_skybox->setName("skybox");
@@ -195,6 +181,7 @@ void GLWidget::initializeGL() {
 
     gl = QOpenGLFunctions(context()->contextHandle());
 
+
     std::vector<GLfloat> quadData = {-1.0, 1.0, 0.0, 0.0, 0.0,
                                      -1.0, -1.0, 0.0, 0.0, 1.0,
                                      1.0, 1.0, 0.0, 1.0, 0.0,
@@ -204,6 +191,15 @@ void GLWidget::initializeGL() {
     m_quad->setAttribute(ShaderAttrib::POSITION, 3, 0, VBOAttribMarker::DATA_TYPE::FLOAT, false);
     m_quad->setAttribute(ShaderAttrib::TEXCOORD, 2, 3*sizeof(GLfloat), VBOAttribMarker::DATA_TYPE::FLOAT, false);
     m_quad->buildVAO();
+
+    glGenVertexArrays(1, &m_particlesVAO);
+    std::cout<<"num particles during init:"<<m_numParticles<<std::endl;
+
+    m_particlesFBO1 = std::make_shared<FBO>(3,FBO::DEPTH_STENCIL_ATTACHMENT::NONE,m_numParticles,1,
+                                            TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE, TextureParameters::FILTER_METHOD::NEAREST, GL_FLOAT);
+    m_particlesFBO2 = std::make_shared<FBO>(3,FBO::DEPTH_STENCIL_ATTACHMENT::NONE,m_numParticles,1,
+                                            TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE, TextureParameters::FILTER_METHOD::NEAREST, GL_FLOAT);
+
 
     std::vector<GLfloat> sphereData = SPHERE_VERTEX_POSITIONS;
     m_sphere = std::make_unique<OpenGLShape>();
@@ -229,11 +225,29 @@ void GLWidget::initializeGL() {
 }
 
 void GLWidget::resizeGL(int w, int h) {
+    std::cout<<"ResizeGL() called with w="<<w<<" and h="<<h<<std::endl;
+
+    m_width = w;
+    m_height = h;
+
     glViewport(0, 0, w, h);
     s_size->parse(QString("%1,%2").arg(QString::number(w), QString::number(h)));
     camera->setAspectRatio(((float) w) / ((float) h));
+
     m_FBO = std::make_unique<FBO>(1,FBO::DEPTH_STENCIL_ATTACHMENT::NONE,w,h,TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE);
     update();
+}
+
+void GLWidget::setParticleViewport() {
+    std::cout<<"setParticleViewport() called;"<<std::endl;
+
+//    int maxDim = std::max(m_width, m_height);
+//    int x = (m_width - maxDim) / 2.0f;
+//    int y = (m_height - maxDim) / 2.0f;
+//    glViewport(x, y, maxDim, maxDim);
+    glViewport(0, 0, m_width, m_height);
+
+//    glViewport(0,0,m_width, m_height);
 }
 
 void GLWidget::handleAnimation() {
@@ -278,7 +292,7 @@ void GLWidget::handleAnimation() {
 void GLWidget::paintGL() {
 //    handleAnimation();
 
-// Attempts to do anti-aliasing with framebuffers;
+//    //Attempts to do anti-aliasing with framebuffers;
 //    m_FBO->bind();
 //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //    //background skybox
@@ -295,51 +309,117 @@ void GLWidget::paintGL() {
 //    foreach (const UniformVariable *var, *activeUniforms) {
 //        var->setValue(skybox_shader);
 //    }
+
 //    glCullFace(GL_FRONT);
 //    m_quad->draw();
 //    glCullFace(GL_BACK);
 //    m_FBO->unbind();
 //    skybox_shader->release();
 
-//    glClear(GL_COLOR_BUFFER_BIT);
-//    glClear(GL_DEPTH_BUFFER_BIT);
-//    m_FBO->getColorAttachment(0).bind();
-//    m_horizontalBlurProgram->bind();
+
+    //    glClear(GL_COLOR_BUFFER_BIT);
+    //    glClear(GL_DEPTH_BUFFER_BIT);
+    //    m_FBO->getColorAttachment(0).bind();
+    //    m_horizontalBlurProgram->bind();
+    //    m_quad->draw();
+    //    m_horizontalBlurProgram->release();
+
+    //    if (current_shader) {
+    //        glClear(GL_COLOR_BUFFER_BIT);
+    //        glClear(GL_DEPTH_BUFFER_BIT);
+    //        current_shader->bind();
+
+    //        foreach (const UniformVariable *var, *activeUniforms) {
+    //            var->setValue(current_shader);
+    //        }
+    //        current_shader->setUniformValue("resolutionX", this->size().width());
+    //        current_shader->setUniformValue("resolutionY", this->size().height());
+    //        float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
+    //        current_shader->setUniformValue("iTime", t);
+    //        skybox_cube->draw();
+
+    //        current_shader->release();
+    //    }
+
+    //Attempts to do collision detection with FBO;
+    auto prevFBO = m_evenPass ? m_particlesFBO1 : m_particlesFBO2;
+    auto nextFBO = m_evenPass ? m_particlesFBO2 : m_particlesFBO1;
+    float firstPass = m_firstPass ? 1.0f : 0.0f;
+
+    nextFBO->bind();
+    m_sphereUpdateShader->bind();
+    gl.glActiveTexture(GL_TEXTURE0);
+    prevFBO->getColorAttachment(0).bind();
+    gl.glActiveTexture(GL_TEXTURE1);
+    prevFBO->getColorAttachment(1).bind();
+    gl.glActiveTexture(GL_TEXTURE2);
+    m_FBO->getColorAttachment(0).bind();
+    m_sphereUpdateShader->setUniformValue("resolutionX", m_width);
+    m_sphereUpdateShader->setUniformValue("resolutionY", m_height);
+
+    gl.glUniform1f(gl.glGetUniformLocation(m_sphereUpdateShader->programId(),"firstPass"),firstPass);
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereUpdateShader->programId(),"numParticles"),m_numParticles);
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereUpdateShader->programId(),"prevPos"),0);
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereUpdateShader->programId(),"prevVel"),1);
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereUpdateShader->programId(),"prevCol"),2);
+
+    m_quad->draw();
+    nextFBO->unbind();
+    m_sphereUpdateShader->release();
+
+    m_FBO->bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glClearColor(1.0, 1.0, 1.0, 1.0);
+    //background skybox
+    m_sphereDrawShader->bind();
+    setParticleViewport();
+    gl.glActiveTexture(GL_TEXTURE0);
+    nextFBO->getColorAttachment(0).bind();
+    gl.glActiveTexture(GL_TEXTURE1);
+    nextFBO->getColorAttachment(1).bind();
+    gl.glActiveTexture(GL_TEXTURE2);
+    nextFBO->getColorAttachment(2).bind();
+
+    //set uniforms
+//    s_skybox->setValue(skybox_shader);
+//    s_projection->setValue(skybox_shader);
+//    s_view->setValue(skybox_shader);
+//    m_sphereDrawShader->setUniformValue("resolutionX", this->size().width());
+//    m_sphereDrawShader->setUniformValue("resolutionY", this->size().height());
+//    float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
+//    m_sphereDrawShader->setUniformValue("iTime", t);
+//    foreach (const UniformVariable *var, *activeUniforms) {
+//        var->setValue(skybox_shader);
+//    }
+
+//    glCullFace(GL_FRONT);
 //    m_quad->draw();
-//    m_horizontalBlurProgram->release();
+//    glCullFace(GL_BACK);
 
-    //calculate bubble positions
-    update_positions(&m_p1, &m_p2, &m_p3,
-                     &m_v1, &m_v2, &m_v3, ifavoid);
-    //std::cout<<"p1: "<<m_p1.x<<", "<<m_p1.y<<", "<<m_p1.z<<std::endl;
-    //std::cout<<"p2: "<<m_p2.x<<", "<<m_p2.y<<", "<<m_p2.z<<std::endl;
-    //std::cout<<"p3: "<<m_p3.x<<", "<<m_p3.y<<", "<<m_p3.z<<std::endl;
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereDrawShader->programId(),"pos"),0);
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereDrawShader->programId(),"vel"),1);
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereDrawShader->programId(),"col"),2);
 
-    if (current_shader) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        current_shader->bind();
+    gl.glUniform1i(gl.glGetUniformLocation(m_sphereDrawShader->programId(),"numParticles"),m_numParticles);
 
-        foreach (const UniformVariable *var, *activeUniforms) {
-            var->setValue(current_shader);
-        }
-        current_shader->setUniformValue("resolutionX", this->size().width());
-        current_shader->setUniformValue("resolutionY", this->size().height());
-        float t = QTime::currentTime().minute() * 60.f + QTime::currentTime().second() + QTime::currentTime().msec() / 1000.f;
-        current_shader->setUniformValue("iTime", t);
-        gl.glUniform3fv(gl.glGetUniformLocation(current_shader->programId(), "unif_p1"),1, glm::value_ptr(m_p1));
-        gl.glUniform3fv(gl.glGetUniformLocation(current_shader->programId(), "unif_p2"),1, glm::value_ptr(m_p2));
-        gl.glUniform3fv(gl.glGetUniformLocation(current_shader->programId(), "unif_p3"),1, glm::value_ptr(m_p3));
+    glBindVertexArray(m_particlesVAO);
+    gl.glDrawArrays(GL_TRIANGLES, 0, 3 * m_numParticles);
+    glBindVertexArray(0);
+    gl.glActiveTexture(GL_TEXTURE0);
 
-        //pass in positions as uniform
-        //s_size = new UniformVariable(this->context()->contextHandle());
-        //s_size->setName("size");
-        //s_size->setType(UniformVariable::TYPE_FLOAT2);
+    m_FBO->unbind();
+    m_sphereDrawShader->release();
 
-        skybox_cube->draw();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    m_FBO->getColorAttachment(0).bind();
+    m_horizontalBlurProgram->bind();
+    m_quad->draw();
+    m_horizontalBlurProgram->release();
 
-        current_shader->release();
-    }
+    m_firstPass = false;
+    m_evenPass = ! m_evenPass;
+
 
 }
 

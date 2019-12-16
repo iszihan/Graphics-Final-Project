@@ -4,8 +4,12 @@ in vec2 fragCoord;
 out vec4 fragColor;
 
 in vec3 pos_object;
-uniform samplerCube skybox;
 
+uniform samplerCube skybox;
+uniform sampler2D pos;
+uniform sampler2D vel;
+
+in
 
 uniform int resolutionX;
 uniform int resolutionY;
@@ -27,11 +31,6 @@ const float nu = 1.4;
 mat3 sparsespfilta[13];
 mat3 sparsespfiltb[13];
 mat3 sparsespfiltconst;
-
-//get bubble positions
-uniform vec3 unif_p1;
-uniform vec3 unif_p2;
-uniform vec3 unif_p3;
 
 #define MAX_BOUNCES 3
 #define epsilon 0.001
@@ -66,11 +65,9 @@ struct Hit
     float t;	// solution to p=o+t*d
     vec3 n;	// normal
     Material m;	// material
-
-    bool isCollision; //if current hit is in collision with other spheres
 };
 
-const Hit noHit = Hit(1e10, vec3(0.f), Material(0.f, vec3(-1.f), vec3(-1.f), vec3(-1.f)),false);
+const Hit noHit = Hit(1e10, vec3(0.f), Material(0.f, vec3(-1.f), vec3(-1.f), vec3(-1.f)));
 
 struct Plane
 {
@@ -92,7 +89,7 @@ Hit intersectPlane(Plane p, Ray r)
     if (dotnd > 0.f)
         return noHit;
     float t = -(dot(r.o, p.n) + p.d) / dotnd;
-    return Hit(t, p.n, p.m,false);
+    return Hit(t, p.n, p.m);
 }
 
 vec4 sp_spectral_filter(vec4 col, float filmwidth, float cosi)
@@ -180,7 +177,7 @@ bool isInside(vec2 a, vec2 b)
     return a.x < b.x && a.y < b.y;
 }
 
-Hit intersectSphere(Sphere s, Ray r, bool isCollision)
+Hit intersectSphere(Sphere s, Ray r)
 {
     vec3 op = s.p - r.o;
     float b = dot(op, r.d);
@@ -195,7 +192,7 @@ Hit intersectSphere(Sphere s, Ray r, bool isCollision)
     if (t < 0.f)
         return noHit;
 
-    return Hit(t, (r.o + t * r.d - s.p) / s.r, s.m, isCollision);
+    return Hit(t, (r.o + t * r.d - s.p) / s.r, s.m);
 }
 
 bool compare(inout Hit a, Hit b)
@@ -211,64 +208,15 @@ Hit intersectScene(Ray r)
 {
     float t = iTime / 5.0;
     //Plane p = Plane(0.f, vec3(0.f, 1.f, 0.f), Material(0.f, vec3(0.1f), vec3(0.5f, 0.4f, 0.3f), vec3(0.04f)));
-
-    vec3 p1= vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f);
-    vec3 p2= vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f);
-    vec3 p3= vec3(cos(t*1.3),1.f + cos(t*1.7),cos(t*0.7) - 5.f);
-
-//    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
-//    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
-//    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
-
-    //collision detection
-    float eps=0.3;
-
-
-
-    p1=unif_p1;
-    p2=unif_p2;
-    p3=unif_p3;
-
-    bool m1_collision=false;
-    bool m2_collision=false;
-    bool m3_collision=false;
-
-    if(distance(p1,p2)< 2* sphereRadius + eps){
-
-        m1_collision=true;
-        m2_collision=true;
-
-     }
-     if(distance(p1,p3) < 2* sphereRadius + eps){
-         m1_collision=true;
-         m3_collision=true;
-
-      }
-      if(distance(p2,p3) < 2* sphereRadius + eps){
-
-          m2_collision=true;
-          m3_collision=true;
-
-      }
-
-
-
-
-
-    Sphere m1 = Sphere(0.5f, p1, Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
-    Sphere m2 = Sphere(0.5f, p2, Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
-    Sphere m3 = Sphere(0.5f, p3, Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
-//    Sphere m1 = Sphere(0.5f, p1, material_1);
-//    Sphere m2 = Sphere(0.5f, p2, material_2);
-//    Sphere m3 = Sphere(0.2f, p3, material_3);
-
-
+    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
+    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
+    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
 
     Hit hit = noHit;
     //compare(hit, intersectPlane(p, r));
-    compare(hit, intersectSphere(m1, r, m1_collision));
-    compare(hit, intersectSphere(m2, r, m2_collision));
-    compare(hit, intersectSphere(m3, r, m3_collision));
+    compare(hit, intersectSphere(m1, r));
+    compare(hit, intersectSphere(m2, r));
+    compare(hit, intersectSphere(m3, r));
     return hit;
 }
 
@@ -312,10 +260,6 @@ vec4 illuminateBubble(Hit hit, in vec3 pos , in vec3 camdir)
     float filmWidth = varfilmwidth + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
 
     vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(normal, camdir));
-
-    if(hit.isCollision){
-        bubbleColor=vec4(1.f,0.f,0.f,0.f);
-    }
 
     return mix(backgroundColor, bubbleColor, F);
 //    return bubbleColor;
