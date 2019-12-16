@@ -9,5 +9,4 @@ void main() {
     //uv = inUV;
     gl_Position = vec4(position, 1.0);
     uv = gl_Position.xy;
-//    uv = (gl_Position.xy * 2.0 ) - 1.0;
 }

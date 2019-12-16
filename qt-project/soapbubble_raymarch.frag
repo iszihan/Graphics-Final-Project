@@ -210,7 +210,8 @@ vec4 illuminateBubble( in vec3 pos , in vec3 camdir)
 
     float F = r0 + (1-r0)*pow((1-dot(normal,-camdir)),5);
     float bubbleHeight = 0.5 + 0.5 * normal.y;
-//    float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
+
+    //float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
     float filmWidth = varfilmwidth + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
 
     vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(normal, camdir));

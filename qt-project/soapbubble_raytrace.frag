@@ -216,14 +216,8 @@ Hit intersectScene(Ray r)
     vec3 p2= vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f);
     vec3 p3= vec3(cos(t*1.3),1.f + cos(t*1.7),cos(t*0.7) - 5.f);
 
-//    Sphere m1 = Sphere(0.5f, vec3(cos(t*1.1),1.f + cos(t*1.3),cos(t*1.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
-//    Sphere m2 = Sphere(0.5f, vec3(cos(t*0.7),1.f + cos(t*1.9),cos(t*2.3) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
-//    Sphere m3 = Sphere(0.5f, vec3(sin(t*1.3),1.f + sin(t*1.7),sin(t*0.7) - 5.f), Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
-
     //collision detection
     float eps=0.3;
-
-
 
     p1=unif_p1;
     p2=unif_p2;
@@ -251,21 +245,12 @@ Hit intersectScene(Ray r)
 
       }
 
-
-
-
-
     Sphere m1 = Sphere(0.5f, p1, Material(1.f, vec3(0.1f), vec3(0.f, 0.f, 0.2f), vec3(0.6f)));
     Sphere m2 = Sphere(0.5f, p2, Material(1.f, vec3(0.1f), vec3(0.f), vec3(0.55f, 0.56f, 0.55f)));
     Sphere m3 = Sphere(0.5f, p3, Material(1.f, vec3(0.1f), vec3(0.f), vec3(1.f, 0.77f, 0.34f)));
-//    Sphere m1 = Sphere(0.5f, p1, material_1);
-//    Sphere m2 = Sphere(0.5f, p2, material_2);
-//    Sphere m3 = Sphere(0.2f, p3, material_3);
-
 
 
     Hit hit = noHit;
-    //compare(hit, intersectPlane(p, r));
     compare(hit, intersectSphere(m1, r, m1_collision));
     compare(hit, intersectSphere(m2, r, m2_collision));
     compare(hit, intersectSphere(m3, r, m3_collision));
@@ -308,7 +293,8 @@ vec4 illuminateBubble(Hit hit, in vec3 pos , in vec3 camdir)
 
     float F = r0 + (1-r0)*pow((1-dot(normal,-camdir)),5);
     float bubbleHeight = 0.5 + 0.5 * normal.y;
-//    float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
+
+    //float filmWidth = varfilmwidth * warpnoise3(pos) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
     float filmWidth = varfilmwidth + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
 
     vec4 bubbleColor = sp_spectral_filter(reflectColor, filmWidth, dot(normal, camdir));
@@ -318,7 +304,6 @@ vec4 illuminateBubble(Hit hit, in vec3 pos , in vec3 camdir)
     }
 
     return mix(backgroundColor, bubbleColor, F);
-//    return bubbleColor;
 }
 
 // ray tracing
@@ -332,28 +317,6 @@ vec3 radiance(Ray r)
         Hit hit = intersectScene(r);
         vec3 pt = r.o + hit.t * r.d;
         if (hit.m.s.r >= 0.f) {
-
-//            vec3 f = fresnel(hit.n, -r.d, hit.m.s);
-//            // Ambient + Diffuse
-//            if (intersectScene(Ray(pt + epsilon * lightDir, lightDir)).m.d.r < 0.f) {
-//                acc += ka * hit.m.a;
-//                acc += kd * (1.f - f) * att * hit.m.d * clamp(dot(hit.n, lightDir), 0.f, 1.f) * lightCol;
-//            }
-//            // Specular: next bounce
-//            att *= f;
-//            vec3 d = reflect(r.d, hit.n);
-//            acc += att * hit.m.s * ks * pow(clamp(dot(normalize(eye - pt), normalize(reflect(pt - lightPos, hit.n))), 0.f, 1.f), 20.f);
-//            if (hit.m.isBubble > 0.5f) {
-//                float bubbleHeight = 0.5 + 0.5 * hit.n.y;
-//                float filmWidth = varfilmwidth * warpnoise3(pt) + minfilmwidth + (1.0 - bubbleHeight) * (maxfilmwidth - minfilmwidth);
-//                vec3 bubbleColor = vec3(sp_spectral_filter(vec4(acc, 1.f), filmWidth, dot(hit.n, pt - r.o)));
-//                acc = mix(acc, bubbleColor, f);
-//                r = Ray(r.o + hit.t * r.d + (epsilon + 1.f) * r.d, r.d);
-//            } else {
-//                r = Ray(r.o + hit.t * r.d + epsilon * d, d);
-//            }
-//            acc *= kr;
-//            kr *= ks;
 
             acc += illuminateBubble(hit, pt, r.d).xyz;
 
